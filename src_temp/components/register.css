@@ -1,0 +1,225 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: whitesmoke;
+  color: black;
+}
+
+header {
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px 30px;
+}
+
+.navigation-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navigation-bar h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.navigation-bar div a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.navigation-bar div a:hover {
+  text-decoration: underline;
+    color: rgb(19, 229, 75);
+}
+
+/* ✅ FIX: Only apply flex to the page layout, not all divs */
+.page-layout {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px;
+}
+
+main {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  
+}
+
+.announcement {
+  flex: 1;
+  background: lightcyan;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: 20px;
+  margin-top: 5%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  text-align: center;
+  position: fixed;
+  left: 0%;
+  max-height: fit-content;
+  max-width: 500px;
+}
+
+.announcement h2 {
+  margin-bottom: 10px;
+  text-decoration: underline;
+}
+
+.announcement ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  text-align: left;
+  justify-content: space-around;
+  margin-top: 5%;
+}
+.announcement ul li {
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.register-page {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px black;
+  width: 100%;
+  max-width: 1200px;
+  justify-self: center;
+  height: relative;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 5%;
+}
+
+.register-page h1,h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+.field-sections {
+  background: white;
+  border: #ffffff;
+  width: 100%;
+  max-width: 800px;
+  height: fit-content;
+  align-items: center;
+  justify-content: center;
+
+}
+
+
+label {
+  display: block;
+  font-size: 1rem;
+  margin-top: 25px;
+}
+
+.select-box {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  background-color: rgb(255, 255, 255);
+  width: fit-content;
+  flex-wrap: wrap;
+  font-size: 1rem;
+  margin-right: 10px;
+} 
+
+.input-box {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #808080;
+  margin-bottom: 15px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.input-box:focus {
+  border-color: rgb(45, 229, 24);
+}
+
+.button {
+  width: 100%;
+  padding: 12px;
+  background: #5cb98f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background: green;
+}
+
+.footer {
+  background: white;
+  box-shadow: 0 -2px 5px lightgray;
+  padding: 10px 0;
+  text-align: center;
+  position: fixed;
+  bottom:0%;
+  width: 100%;}
+
+.footer a {
+  margin: 0 20px;
+  text-decoration: none;
+  color: black;
+  font-size: 0.95rem;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+footer {
+background: white;
+box-shadow: 0 -2px 5px lightgray;
+padding: 10px 0;
+text-align: center;
+}
+
+footer a {
+margin: 0 20px;
+text-decoration: none;
+color: black;
+font-size: 0.95rem;
+}
+
+footer a:hover {
+text-decoration: underline;
+}
+
+
+
+
+
+/* 📱 Responsive fix for small screens */
+@media (max-width: 768px) {
+  .page-layout {
+    flex-direction: column;
+    margin: 20px;
+  }
+
+  .announcement {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+}
