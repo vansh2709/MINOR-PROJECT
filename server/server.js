@@ -79,8 +79,8 @@ app.post("/login", async (req, res) => {
 app.post("/register", async (req, res) => {
   const { role, name, email, password, student_id, teacher_id, branch, year } = req.body;
 
-  if(!email || !password){
-    res.json({success: false, message: "Credentials required"})
+  if (!email || !password) {
+    res.json({ success: false, message: "Credentials required" })
   }
 
   const response = await fetch("http://localhost:8000/validate-creds", {
@@ -99,7 +99,7 @@ app.post("/register", async (req, res) => {
   if (responseJSON.success == false) {
     // convert password to password hash
     const saltRounds = 10;
-    const password_hash =  await bcrypt.hash(password, saltRounds);
+    const password_hash = await bcrypt.hash(password, saltRounds);
     console.log(password)
 
     req.body.password = password_hash;
@@ -107,7 +107,7 @@ app.post("/register", async (req, res) => {
     pool.query(
       `INSERT INTO users (role, name, email, password_hash, student_id, teacher_id, branch, year)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      Object.values(req.body).map( v => v === "" ? "NULL" : v ),
+      Object.values(req.body).map(v => v === "" ? "NULL" : v),
       (err, result) => {
         if (err) {
           console.error("Error inserting user:", err);
@@ -117,12 +117,60 @@ app.post("/register", async (req, res) => {
       }
     );
 
-    res.json({success: true, message: "Registered Successfully"});
-  }else{
-    res.json({success: false, message: "Already Registered"})
+    res.json({ success: true, message: "Registered Successfully" });
+  } else {
+    res.json({ success: false, message: "Already Registered" })
   }
-
 })
+
+
+// fetch timetable
+app.get("/get-timetable", async (req, res) => {
+  try {
+    const { year, branch, section = "A", day } = req.query;
+    
+    if(day === "" || day === undefined){
+      const query = `select day, period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? order by day, period_id`;
+      const [rows] =  await pool.query(query, [
+        year, branch, section, 
+      ]);
+
+      let timetable = {};
+      rows.forEach(row => {
+        if (!timetable[row.day]) {
+          timetable[row.day] = [];
+        }
+        timetable[row.day].push({
+          period_id: row.period_id,
+          subject_id: row.subject_id,
+          subject_name: row.subject_name,
+          teacher_name: row.teacher_name
+        });
+      });
+
+      res.json({
+        success: true,
+        data: timetable
+      });
+      
+    }else{
+      const query = `select period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? and day = ? order by period_id`;
+      const [classes] =  await pool.query(query, [
+        year, branch, section, day
+      ]);
+
+      res.json({
+        success: true,
+        data: {day: day, classes: classes}
+      })
+    }
+    
+  } catch (err) {
+    console.log(err);
+  }
+})
+
+
 
 // ✅ Start server
 const PORT = 8000;

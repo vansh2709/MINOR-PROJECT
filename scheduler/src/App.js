@@ -1,21 +1,25 @@
-import React from "react";
-import { BorwserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-
-import './App.css';
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import StudentDashboard from "./pages/Student_Dashboard";
+import TeacherDashboard from "./pages/Teacher_Dashboard";
+import ProtectedDashboard from "./components/ProtectedDashboard";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={ <Home /> } />
-        <Route path="/signin" element={ <Login /> } />
-        <Route path="/signup" element={ <Register /> } />
+        {/* Default Route */}
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* After login */}
+        <Route path="/dashboard" element={ <ProtectedDashboard /> } />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 
