@@ -67,7 +67,7 @@ function LoginPage() {
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div className='mb-0'>
-            <label className="label" htmlFor="email">Email</label>
+            <label className="label" htmlFor="email">Email</label><br />
             <input
               name='email'
               type="email"
@@ -93,7 +93,7 @@ function LoginPage() {
           </div>
 
           <div>
-            <label className="label" htmlFor="password">Password</label>
+            <label className="label" htmlFor="password">Password</label><br />
             <input
               className="input-box"
               name='password'
