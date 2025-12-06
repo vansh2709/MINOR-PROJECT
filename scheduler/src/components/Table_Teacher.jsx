@@ -1,4 +1,5 @@
 import React from "react";
+import { AppStates } from "../services/states";
 
 /**
  * Teacher Timetable Component
@@ -12,28 +13,28 @@ const TeacherTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
     "04:00 PM", "05:00 PM",
   ];
 
-  const defaultSchedule = [
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "", name: "Lunch Break", classroom: "" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", classroom: "CSE 4th year" },
+  let defaultSchedule = [
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "", name: "Lunch Break", teacher: "" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
+    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
   ];
 
+  const { classes, setClasses } = AppStates();
   const slots = timeSlots || defaultTimeSlots;
-  const items = scheduleItems || defaultSchedule;
 
-  const SubjectCell = ({ code, name, classroom }) => (
+  const SubjectCell = ({ code, name, teacher }) => (
     <td className="subject-cell">
       <div className="subject-box">
         <p className="subject-code">{code}</p>
         <p>{name}</p>
-        <p className="Teacher-name">{classroom}</p>
+        <p className="Teacher-name">{teacher}</p>
       </div>
     </td>
   );
@@ -55,7 +56,7 @@ const TeacherTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
 
         <tbody>
           <tr>
-            {items.map((item, i) => (
+            {classes.map((item, i) => (
               <SubjectCell
                 key={i}
                 code={item.code}

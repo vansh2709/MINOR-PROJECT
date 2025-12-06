@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { AppStates } from "../services/states";
 
 /**
  * Student Timetable Component
@@ -26,54 +27,7 @@ const StudentTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
     { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
   ];
 
-  const [ userData, setUserData ] = useState({});
-  const [ classes, setClasses ] = useState([]);
-
-  async function loadTimetable(params) {
-    const user_creds = localStorage.getItem("user_creds");
-    const userCreds = user_creds ? JSON.parse(user_creds) : undefined;
-    
-    if(userCreds) setUserData(userCreds);
-
-    if (userCreds) {
-      // setting default timetable in case response delays
-      setClasses(defaultSchedule);
-
-      const day = "Monday";
-      const year = userCreds.year;
-      const branch = userCreds.branch;
-      const section = "A";
-
-      const response = await fetch(`http://localhost:8000/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`);
-      let data = await response.json();
-      data = data.data;
-
-      const timetable = [];
-
-      for (let p=0; p<10; p++){
-        if (p > 4) p++;
-        const period = data?.classes.find(f=>f.period_id === p);
-
-        if (period){
-          const period_data = {
-            code: period.subject_id,
-            name: period.subject_name,
-            teacher: period.teacher_name
-          }
-          timetable.push(period_data);
-        }else{
-          timetable.push({ code: "-----", name: "-----", teacher: "-----" })
-        }
-      }
-
-      setClasses(timetable);
-    }
-  }
-
-  useEffect(() => {
-    loadTimetable();
-  }, [])
-
+  const { classes, setClasses } = AppStates();
   const slots = timeSlots || defaultTimeSlots;
 
   const SubjectCell = ({ code, name, teacher }) => (

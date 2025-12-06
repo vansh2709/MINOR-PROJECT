@@ -5,6 +5,9 @@ import StudentLeaveManagement from "../components/LeaveApproval";
 import Sidebar from "../components/ProfileCard";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Announce from "../components/Announce";
+
+
 const TeacherDashboard = () => {
   const announcements = [
     "Tomorrow is a holiday.",
@@ -31,6 +34,10 @@ const TeacherDashboard = () => {
         <div className="timetable-section">
           <TeacherTable />
         </div>
+
+        {/* create announcement */}
+        <Announce />
+
         {/* Right Section – Availability & Leave Management */}
         <div className="Teacher-availability">
           <TeacherAvailability />

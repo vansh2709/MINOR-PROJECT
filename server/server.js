@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql2/promise");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const admin = require("./firebaseAdmin");
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,21 @@ const pool = mysql.createPool({
   database: "scheduler",
   password: "rahul@1992#",
 });
+
+// get fcm token from client
+app.post("/save-fcm-token", async (req, res) => {
+  const { email, token } = req.body;
+  const query = "update users set fcm_token = ? where email = ?";
+
+  try {
+    const response = await pool.query(query, [token, email]);
+    res.json({ success: true });
+  } catch (err) {
+    res.json({ success: false, error: err });
+  }
+})
+
+
 
 // ✅ Endpoint: Validate credentials
 app.post("/validate-creds", async (req, res) => {
@@ -127,46 +143,105 @@ app.post("/register", async (req, res) => {
 // fetch timetable
 app.get("/get-timetable", async (req, res) => {
   try {
-    const { year, branch, section = "A", day } = req.query;
-    
-    if(day === "" || day === undefined){
-      const query = `select day, period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? order by day, period_id`;
-      const [rows] =  await pool.query(query, [
-        year, branch, section, 
-      ]);
+    const { year, branch, section = "A", day, teacher_id, teacher_name } = req.query;
 
-      let timetable = {};
-      rows.forEach(row => {
-        if (!timetable[row.day]) {
-          timetable[row.day] = [];
-        }
-        timetable[row.day].push({
-          period_id: row.period_id,
-          subject_id: row.subject_id,
-          subject_name: row.subject_name,
-          teacher_name: row.teacher_name
+    if (teacher_id) {
+
+      if (day === "" || day === undefined) {
+        const query = `select period_id, subject_id, subject_name, teacher_name from schedule where teacher_id = ? order by period_id`;
+        const [rows] = await pool.query(query, [
+          year, branch, section,
+        ]);
+
+        let timetable = {};
+        rows.forEach(row => {
+          if (!timetable[row.day]) {
+            timetable[row.day] = [];
+          }
+          timetable[row.day].push({
+            period_id: row.period_id,
+            subject_id: row.subject_id,
+            subject_name: row.subject_name,
+            teacher_name: row.teacher_name
+          });
         });
-      });
 
-      res.json({
-        success: true,
-        data: timetable
-      });
-      
-    }else{
-      const query = `select period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? and day = ? order by period_id`;
-      const [classes] =  await pool.query(query, [
-        year, branch, section, day
-      ]);
+        res.json({
+          success: true,
+          data: timetable
+        });
+      } else {
+        const query = `select period_id, subject_id, subject_name, teacher_name from schedule where teacher_id = ? and day = ? order by period_id`;
+        const [classes] = await pool.query(query, [teacher_id, day
+        ]);
 
-      res.json({
-        success: true,
-        data: {day: day, classes: classes}
-      })
+        res.json({
+          success: true,
+          data: { day: day, classes: classes }
+        })
+
+      }
+
+
+    } else {
+      if (day === "" || day === undefined) {
+        const query = `select day, period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? order by day, period_id`;
+        const [rows] = await pool.query(query, [
+          year, branch, section,
+        ]);
+
+        let timetable = {};
+        rows.forEach(row => {
+          if (!timetable[row.day]) {
+            timetable[row.day] = [];
+          }
+          timetable[row.day].push({
+            period_id: row.period_id,
+            subject_id: row.subject_id,
+            subject_name: row.subject_name,
+            teacher_name: row.teacher_name
+          });
+        });
+
+        res.json({
+          success: true,
+          data: timetable
+        });
+
+      } else {
+        const query = `select period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? and day = ? order by period_id`;
+        const [classes] = await pool.query(query, [
+          year, branch, section, day
+        ]);
+
+        res.json({
+          success: true,
+          data: { day: day, classes: classes }
+        })
+      }
     }
-    
   } catch (err) {
     console.log(err);
+  }
+})
+
+
+// Announce 
+app.post("/announce", async (req, res) => {
+  const { title, body, status, target_year, target_branch, target_section, created_by, expires_at } = req.body;
+
+  const query = "insert into announcements (title, body, created_by, target_year, target_branch, target_section, status, deleted_at) values(?, ?, ?, ?, ?, ?, ?, ?)"
+
+  try {
+    const response = await pool.query(query, [title, body, JSON.stringify(created_by), target_year, target_branch, target_section, status, expires_at.replace("T", " ")]);
+
+    // send notification 
+    const resp = await notify(title, body, target_year, target_branch, target_section, res);
+    res.json({ success: true, message: "saved to server and notified to target: " + resp });
+
+  } catch (err) {
+    console.log(err)
+    res.json({ success: false, error: err });
   }
 })
 
@@ -177,3 +252,29 @@ const PORT = 8000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
 
+// helpers
+
+async function notify(title, body, target_year, target_branch, target_section) {
+  return new Promise(async (resolve, reject) => {
+    const query = `select fcm_token from users where role = ? ${target_year == "all" ? "" : 'and year = ?'} ${target_branch == "all" ? "" : 'and branch = ?'}  ${target_section == "all" ? "" : 'and section = ?'}`;
+
+    const [students] = await pool.query(query, ["student", target_year, target_branch, target_section]);
+
+    students.forEach(async (student) => {
+      const token = student.fcm_token;
+      const message = {
+        notification: { title, body },
+        token,
+      };
+
+      try {
+        const response = await admin.messaging().send(message);
+        console.log("Notification sent:", response);
+        resolve(response);
+      } catch (err) {
+        console.error(err);
+        resolve(err);
+      }
+    })
+  })
+}
