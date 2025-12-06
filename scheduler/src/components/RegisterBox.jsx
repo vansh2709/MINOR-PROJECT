@@ -114,13 +114,13 @@ function RegisterPage() {
   };
 
   return (
-      <div className="content">
+      <div>
         <div className="register-page" id="login-page"> {/* Assuming the ID should be register-page */}
-          <h1>Register Account</h1>
+          <h1 className="headings">Register Account</h1>
           <form id="registrationForm" onSubmit={handleSubmit}>
 
             {/* Role Select */}
-            <label htmlFor="roleSelect">Select Role:</label>
+            <label className="label" htmlFor="roleSelect">Select Role:</label><br />
             <select
               className="select-box"
               id="roleSelect"
@@ -136,7 +136,7 @@ function RegisterPage() {
             <br />
 
             {/* Common Fields */}
-            <label htmlFor="name">Name:</label>
+            <label className="label" htmlFor="name">Name:</label><br />
             <input
               className="input-box"
               type="text"
@@ -148,7 +148,7 @@ function RegisterPage() {
               onChange={handleInputChange}
             />
 
-            <label htmlFor="email">Email:</label>
+            <label className="label" htmlFor="email">Email:</label><br />
             <input
               type="email"
               id="email"
@@ -177,7 +177,7 @@ function RegisterPage() {
                 ) : null
             }
 
-            <label htmlFor="password">Password:</label>
+            <label className="label" htmlFor="password">Password:</label><br />
             <input
               className="input-box"
               type="password"
@@ -193,7 +193,7 @@ function RegisterPage() {
             {/* Teacher Fields (Conditional Rendering) */}
             {selectedRole === 'Teacher' && (
               <fieldset className="field-sections" id="teacherFields">
-                <label htmlFor="teacherId">Teacher ID:</label>
+                <label className="label" htmlFor="teacherId">Teacher ID:</label>
                 <input
                   type="text"
                   id="teacherId"
@@ -228,7 +228,7 @@ function RegisterPage() {
             {/* Student Fields (Conditional Rendering) */}
             {selectedRole === 'Student' && (
               <fieldset className="field-sections" id="studentFields">
-                <label htmlFor="year">Branch and Year:</label>
+                <label className="label" htmlFor="year">Branch and Year:</label>
                 <select
                   className="select-box"
                   id="branch"
@@ -261,7 +261,7 @@ function RegisterPage() {
                 </select>
                 <br />
 
-                <label htmlFor="studentId">Student ID:</label>
+                <label className="label" htmlFor="studentId">Student ID:</label>
                 <input
                   type="text"
                   id="studentId"
