@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { AppStates } from "../services/states";
 
 /**
- * Student Timetable Component
- * Displays a single day's schedule for a student.
- * Accepts props but works with default sample data.
+ * Teacher Timetable Component
+ * Displays a single day's schedule for a teacher.
+ * Currently uses static sample data, but accepts props for dynamic usage.
  */
-
-const TimeTable = ({ day = "Monday" }) => {
+const TeacherTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
   const defaultTimeSlots = [
     "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
     "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM",
@@ -27,9 +26,8 @@ const TimeTable = ({ day = "Monday" }) => {
     { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
   ];
 
-  const { classes } = AppStates();
-  
-  const slots = defaultTimeSlots;
+  const { classes, setClasses } = AppStates();
+  const slots = timeSlots || defaultTimeSlots;
 
   const SubjectCell = ({ code, name, teacher }) => (
     <td className="subject-cell">
@@ -44,7 +42,7 @@ const TimeTable = ({ day = "Monday" }) => {
   return (
     <div className="schedule-container">
       <h2>
-        <span className="Day-label">{classes.day}</span>
+        <span className="vertical-text">{day}</span>
       </h2>
 
       <table className="schedule-table">
@@ -58,12 +56,12 @@ const TimeTable = ({ day = "Monday" }) => {
 
         <tbody>
           <tr>
-            {classes?.classes?.map((item, i) => (
+            {classes.map((item, i) => (
               <SubjectCell
                 key={i}
                 code={item.code}
                 name={item.name}
-                teacher={item.teacher}
+                classroom={item.classroom}
               />
             ))}
           </tr>
@@ -73,4 +71,4 @@ const TimeTable = ({ day = "Monday" }) => {
   );
 };
 
-export default TimeTable;
+export default TeacherTable;

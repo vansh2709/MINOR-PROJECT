@@ -15,10 +15,11 @@ const Sidebar = ({ name, email, id, onLogout }) => {
   return (
     <aside className="sidebar">
       <div className="profile-card">
-        <div className="avatar">
+        <div>
           {
             userData?.avatar ? (
               <img
+                className="avatar"
                 src="https://via.placeholder.com/100"
                 alt="Profile Avatar"
               />

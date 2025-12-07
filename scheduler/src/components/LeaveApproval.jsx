@@ -2,7 +2,7 @@ import React from "react";
 
 const StudentLeaveManagement = ({ onApprove, onReject }) => {
   return (
-    <div className="student-leave-container">
+    <div className="Student-leave-management">
       <h2>Student Leave Management</h2>
 
       <div className="submit-row">
