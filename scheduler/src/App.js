@@ -13,7 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Default Route */}
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<ProtectedDashboard />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 

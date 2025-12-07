@@ -1,9 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { AppStates } from "../services/states";
 
 const Sidebar = ({ name, email, id, onLogout }) => {
-
+  const navigate = useNavigate();
   const { userData } = AppStates();
+
+  async function logout() {
+    // simulate logout like buffering or loading 
+    localStorage.removeItem("user_creds");
+    navigate("/login");
+  }
 
   return (
     <aside className="sidebar">
@@ -16,7 +23,7 @@ const Sidebar = ({ name, email, id, onLogout }) => {
                 alt="Profile Avatar"
               />
             ) : (
-              <h3>{ userData?.name ? userData.name[0] : "Guest" }</h3>
+              <h3>{ userData.name ? userData?.name[0] : "Guest" }</h3>
             )
           }
         </div>
@@ -34,7 +41,7 @@ const Sidebar = ({ name, email, id, onLogout }) => {
         </div>
       </div>
 
-      <button className="logout-btn" onClick={onLogout}>
+      <button className="logout-btn" onClick={logout}>
         Logout
       </button>
     </aside>

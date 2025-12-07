@@ -225,6 +225,13 @@ app.get("/get-timetable", async (req, res) => {
   }
 })
 
+// save leave
+app.post("/upload-leave", (req, res)=>{
+  const { applicant, subject, application, applicable_from, applicable_to } = req.body;
+
+  console.log(applicant, subject, application, applicable_from, applicable_to)
+})
+
 
 // Announce 
 app.post("/announce", async (req, res) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import TeacherTable from "../components/Table_Teacher";
+import TimeTable from "../components/TimeTable";
 import TeacherAvailability from "../components/TeacherAvailablility";
 import StudentLeaveManagement from "../components/LeaveApproval";
 import Sidebar from "../components/ProfileCard";
@@ -32,7 +32,7 @@ const TeacherDashboard = () => {
 
         {/* Left Section – Timetable */}
         <div className="timetable-section">
-          <TeacherTable />
+          <TimeTable />
         </div>
 
         {/* create announcement */}

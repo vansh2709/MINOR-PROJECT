@@ -6,7 +6,7 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({ children }) => {
 
     const [userData, setUserData] = useState({});
-    const [classes, setClasses] = useState([]);
+    const [classes, setClasses] = useState({});
 
     const loadTimetable = async (userCreds) => {
         const days = [
@@ -15,7 +15,7 @@ export const GlobalProvider = ({ children }) => {
         ];
         const date = new Date();
         const int_day = date.getDay();
-        const day = days[int_day];
+        const day = "Monday" //days[int_day];
         const year = userCreds.year;
         const branch = userCreds.branch;
         const section = "A";
@@ -54,8 +54,7 @@ export const GlobalProvider = ({ children }) => {
             }
         }
 
-        console.log(timetable)
-        setClasses(timetable);
+        setClasses({day: day, classes: timetable});
     }
 
     async function requestNotification() {

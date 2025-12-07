@@ -1,5 +1,5 @@
 import React from "react";
-import StudentTable from "../components/Table_Student";
+import TimeTable from "../components/TimeTable";
 import Announcements from "../components/Announcements";
 import Sidebar from "../components/ProfileCard";
 import LeaveBox from "../components/Student_Leave";
@@ -28,7 +28,7 @@ const StudentDashboard = () => {
 
         {/* Left Section – Timetable */}
         <div className="timetable-section">
-          <StudentTable />
+          <TimeTable />
         </div>
         <div className="leave-box">
             <LeaveBox/>

@@ -7,7 +7,7 @@ import { AppStates } from "../services/states";
  * Accepts props but works with default sample data.
  */
 
-const StudentTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
+const TimeTable = ({ day = "Monday" }) => {
   const defaultTimeSlots = [
     "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
     "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM",
@@ -27,8 +27,9 @@ const StudentTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
     { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
   ];
 
-  const { classes, setClasses } = AppStates();
-  const slots = timeSlots || defaultTimeSlots;
+  const { classes } = AppStates();
+  
+  const slots = defaultTimeSlots;
 
   const SubjectCell = ({ code, name, teacher }) => (
     <td className="subject-cell">
@@ -43,7 +44,7 @@ const StudentTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
   return (
     <div className="schedule-container">
       <h2>
-        <span className="Day-label">{day}</span>
+        <span className="Day-label">{classes.day}</span>
       </h2>
 
       <table className="schedule-table">
@@ -57,7 +58,7 @@ const StudentTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
 
         <tbody>
           <tr>
-            {classes.map((item, i) => (
+            {classes?.classes?.map((item, i) => (
               <SubjectCell
                 key={i}
                 code={item.code}
@@ -72,4 +73,4 @@ const StudentTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
   );
 };
 
-export default StudentTable;
+export default TimeTable;
