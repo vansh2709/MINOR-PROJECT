@@ -49,7 +49,7 @@ const TeacherTable = ({ day = "Monday", timeSlots, scheduleItems }) => {
         <thead>
           <tr>
             {slots.map((time) => (
-              <th key={time}>{time}</th>
+              <th className="table-time" key={time}>{time}</th>
             ))}
           </tr>
         </thead>
