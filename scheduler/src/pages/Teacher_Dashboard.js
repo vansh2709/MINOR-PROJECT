@@ -42,7 +42,7 @@ const TeacherDashboard = () => {
         <div className="Teacher-availability">
           <TeacherAvailability />
         </div>
-        <div className="card Student-leave-management">
+        <div className="card student-leave-container">
           <StudentLeaveManagement />
         </div>
 
