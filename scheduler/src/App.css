@@ -6,6 +6,7 @@
 }
 
 .header{
+    display: flex;
     background-color: #4CAF50;
     color: white;
     padding: 20px;
@@ -26,7 +27,6 @@
     font-weight: bold;
     margin-right: 20px;    
     justify-self: left;
-    position:absolute;
     left:20px;
     padding: 10px;
 }
@@ -41,13 +41,14 @@
     font-weight: bold;
     font-size: 1.2rem;
     margin:5px;
-    border-left: #000000 2px solid;
+    
 }
 
 .header-links{
     margin: 10px 10px;
     padding: 10px;
-    justify-self: right;
+    position: relative;
+    left: 40%;
     font-size: 1.5rem;
     gap: 15px;    
 }
@@ -99,6 +100,9 @@
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    width: 90px;
+    margin: 5px;
+    border-radius: 15px;
 }
 .reject-btn{
     background-color: #f44336;
@@ -106,7 +110,18 @@
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    width: 90px;
+    border-radius: 15px;
+    margin: 5px;
 }
+
+.approve-btn:hover{
+    background-color: #207724;
+}
+
+.reject-btn:hover{
+    background-color: #730000;
+} 
 .button{
     background-color: #008CBA;
     color: white;
@@ -116,7 +131,7 @@
 }
 
 .logout-btn{
-    background-color: #555555;
+    background-color: #ff0000;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -126,13 +141,16 @@
 }
 
 .dashboard{
-    padding: 2px;
+    border-radius: 10px;
+    width: 100%;
 }
 
 .dashboard-content{
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 4fr; /* Ratio 1:4 */
+    grid-auto-rows: auto;
+    gap: 20px;
+    padding: 20px;
 }
 .field-sections{
     margin: 20px;
@@ -164,7 +182,7 @@
   border-radius:10px;
   box-shadow:0 2px 8px black;
   width:100%;
-  max-width: 400px;
+  max-width: 600px;
   margin:20px;
   text-align:center;
 }
@@ -178,15 +196,26 @@
     text-align: center;
     height: fit-content;
 }
-
-.aside{
-    background-color: #f4f4f4;
-    padding: 15px;
-    margin-top: 20px;
+.sidebar {
+  width: 280px;
+  grid-column: 1;
+  grid-row: 1;    /* Half the screen width */
+  height: fit-content;  /* Full screen height */
+  background: #ffffff;
+  box-shadow:0 2px 8px black;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: center;
+  
 }
 
 .profile-card{
     align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    align-content: center;
 }
 
 .avatar{
@@ -208,6 +237,16 @@
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
+    box-shadow:0 2px 8px black;
+    
+
+}
+.other-cards{
+    margin-top: 20px;
+    grid-column: span 2;
+    display: block;
+    box-shadow:0 2px 8px black;
+
 }
 
 .teacher-availability{
@@ -230,22 +269,24 @@
     font-size: 1rem;
 }
 
-.Student-leave-mangement{
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.Student-leave-management{
     padding: 20px;
-    width: 80%;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    width: 95%;
+    align-items: center;
+    align-content: center;
+    text-align: center;    
+    
 }
 
 .schedule-container{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px;
-    position:sticky;
+    grid-column:2;
+    grid-row: 1;
     background-color: rgb(255, 255, 255);
-    border: #000000 2px solid;
+    box-shadow:0 2px 8px black;
+
     border-radius: 10px;
     padding: 15px;
 }
@@ -266,7 +307,7 @@
     height: auto;
     padding: 5px;
     border-radius: 15px;
-    box-shadow: #000000 2px 2px 5px rgb(0, 0, 0);
+    
     
 }
 .table-row{
@@ -275,9 +316,9 @@
     height: auto;
 }
 .timetable-section{
-    left:20%;
-    top:15%;
-    position: absolute;
+    left:280px;
+    top:90px;
+    
 }
 
 .subject-cell{
