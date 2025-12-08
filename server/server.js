@@ -18,8 +18,14 @@ const pool = mysql.createPool({
 
 // get fcm token from client
 app.post("/save-fcm-token", async (req, res) => {
-  const { email, token } = req.body;
+  const { email, token, topics } = req.body;
   const query = "update users set fcm_token = ? where email = ?";
+
+  // subscribe to topics
+  console.log(topics)
+  topics.forEach( async (topic)=>{
+    await admin.messaging().subscribeToTopic(token, topic);
+  })
 
   try {
     const response = await pool.query(query, [token, email]);
@@ -225,11 +231,68 @@ app.get("/get-timetable", async (req, res) => {
   }
 })
 
+// fetch leave
+app.get("/fetch-leaves", async (req, res)=>{
+  const { user_data } = req.query;
+  const userData = JSON.parse((user_data));
+  
+  let query = "";
+  if(userData.role === "Student"){
+    query = "select name, year, branch, student_id, subject, application, applicable_from, applicable_to, status, created_at from leaves where student_id = ? and month(created_at) = month(current_date()) and year(created_at) = year(current_date()) order by created_at desc";
+  }
+
+  try {
+    const [ leaves ] = await pool.query(query, [ userData.student_id ]);
+    res.json({success: true, data: leaves, message: "leaves fetched"});
+  } catch (err) {
+    console.log(err);
+    res.json({success: false, message: err});
+  }
+})
+
 // save leave
-app.post("/upload-leave", (req, res)=>{
+app.post("/upload-leave", async (req, res) => {
   const { applicant, subject, application, applicable_from, applicable_to } = req.body;
 
-  console.log(applicant, subject, application, applicable_from, applicable_to)
+  let query = "";
+  let values = [];
+  if (applicant.role === "Student") {
+    query = `insert into leaves (
+      name, 
+      year, 
+      branch,
+      student_id, 
+      subject, 
+      application, 
+      applicable_from, 
+      applicable_to, 
+      status
+    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    values = [applicant?.name, applicant?.year, applicant?.branch, applicant?.student_id, subject, application, applicable_from, applicable_to, "Pending"];
+  } else {
+    `insert into leaves (
+      name,  
+      teacher_id, 
+      subject, 
+      application, 
+      applicable_from, 
+      applicable_to, 
+      status
+    ) values (?, ?, ?, ?, ?, ?, ?)`;
+    values = [applicant?.name, applicant?.teacher_id, subject, application, applicable_from, applicable_to, "Pending"];
+  }
+
+  try {
+    const response = await pool.query(query, values);
+    console.log(response)
+    res.json({success: true, message: "Leave submitted successfully"});
+  } catch (err) {
+    if(err.code === "ER_DUP_ENTRY"){
+      res.json({success: false, message: "Duplicate application found"})
+    }
+    console.log(err)
+    res.json({success: false, message: "error while submitting"})
+  }
 })
 
 
@@ -252,6 +315,16 @@ app.post("/announce", async (req, res) => {
   }
 })
 
+
+
+
+
+// notify for next day timetable
+async function notifyTimetable(params) {
+  const topics = {
+    "1year": ["cse_year"]
+  }
+}
 
 
 // ✅ Start server

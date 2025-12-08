@@ -5,7 +5,7 @@ const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
 
-    const [userData, setUserData] = useState({});
+    const [userData, setUserData] = useState();
     const [classes, setClasses] = useState({});
 
     const loadTimetable = async (userCreds) => {
@@ -15,14 +15,14 @@ export const GlobalProvider = ({ children }) => {
         ];
         const date = new Date();
         const int_day = date.getDay();
-        const day = "Monday" //days[int_day];
+        const day = days[int_day];
         const year = userCreds.year;
         const branch = userCreds.branch;
         const section = "A";
 
         const role = userCreds.role;
         let url = "";
-        if(role==="Student") url = `http://localhost:8000/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`;
+        if (role === "Student") url = `http://localhost:8000/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`;
         else url = `http://localhost:8000/get-timetable?teacher_name=${encodeURIComponent(userCreds.name)}&teacher_id=${userCreds.teacher_id}&day=${day}`;
 
         const response = await fetch(url);
@@ -54,7 +54,7 @@ export const GlobalProvider = ({ children }) => {
             }
         }
 
-        setClasses({day: day, classes: timetable});
+        setClasses({ day: day, classes: timetable });
     }
 
     async function requestNotification() {
@@ -91,7 +91,12 @@ export const GlobalProvider = ({ children }) => {
                     },
                     body: JSON.stringify({
                         email: userCreds.email,
-                        token: token
+                        token: token,
+                        topics: userCreds?.role === "Student" ? [
+                            `year_${userCreds?.year}`,
+                            `branch_${userCreds?.branch}`,
+                            `${userCreds?.branch}_year_${userCreds?.year}_section_${userCreds?.section}`
+                        ] : ["teachers"]
                     })
                 })
                 const res_data = await response.json();
@@ -102,17 +107,34 @@ export const GlobalProvider = ({ children }) => {
     useEffect(() => {
         const user_creds = localStorage.getItem("user_creds");
         const userCreds = user_creds ? JSON.parse(user_creds) : undefined;
-        if (userCreds !== undefined) {
+        if (userCreds?.email !== undefined) {
             setUserData(userCreds)
             loadTimetable(userCreds);
 
-            // check for notification permission
+            // subscribe to fcm
             SubscribePushNotification(userCreds);
             return;
         }
     }, [])
 
+    // functions
+    async function doFetch(url, method = "GET", headers = {}, body = null) {
+        try {
+            const response = await fetch(url, {
+                method,
+                headers,
+                body
+            });
+
+            return { data: response, error: null };
+        } catch (err) {
+            return { data: null, error: err };
+        }
+    }
+
+
     const exports = {
+        doFetch,
         userData,
         classes, setClasses
     }
@@ -124,4 +146,6 @@ export const GlobalProvider = ({ children }) => {
     )
 }
 
-export const AppStates = () => useContext(GlobalContext);
+export const AppStates = () => {
+    return useContext(GlobalContext);
+};

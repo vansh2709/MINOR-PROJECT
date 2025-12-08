@@ -24,20 +24,20 @@ const Sidebar = ({ name, email, id, onLogout }) => {
                 alt="Profile Avatar"
               />
             ) : (
-              <h3>{ userData.name ? userData?.name[0] : "Guest" }</h3>
+              <h3>{ userData?.name ? userData?.name[0] : "Guest" }</h3>
             )
           }
         </div>
 
         <div className="info-list">
           <div className="info-item">
-            <span>Name</span><span>: {userData.name}</span>
+            <span>Name</span><span>: {userData?.name}</span>
           </div>
           <div className="info-item">
-            <span>Email</span><span>: {userData.email}</span>
+            <span>Email</span><span>: {userData?.email}</span>
           </div>
           <div className="info-item">
-            <span>ID</span><span>: {userData.role === "Student" ? userData.student_id : userData.teacher_id}</span>
+            <span>ID</span><span>: {userData?.role === "Student" ? userData?.student_id : userData?.teacher_id}</span>
           </div>
         </div>
       </div>

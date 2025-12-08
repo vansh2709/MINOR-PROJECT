@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AppStates } from "../services/states";
 
 const LeaveBox = ({
@@ -12,34 +12,54 @@ const LeaveBox = ({
   const applicationRef = useRef(HTMLTextAreaElement);
   const applicable_from_ref = useRef(HTMLInputElement);
   const applicable_to_ref = useRef(HTMLInputElement);
+  const [leaveHistory, setLeaveHistory] = useState([]);
 
-  const { userCreds } = AppStates();
+  const { userData, doFetch } = AppStates();
+
+  async function loadLeaves() {
+    if (!userData) return;
+    const url = `http://localhost:8000/fetch-leaves?user_data=${encodeURIComponent(JSON.stringify(userData))}`;
+    const response = await doFetch(url, "GET");
+    const leaves = await response.data.json();
+    console.log(leaves.data[0])
+    setLeaveHistory(leaves.data);
+  }
+
+  useEffect(() => {
+    // fetch leave
+    loadLeaves();
+  }, [userData])
 
   async function submitLeave() {
     const application = applicationRef.current.value;
-
-    const subject = application.match(/[Ss]ubject\s*:\s*(.*)\n/)[1];
     const from = applicable_from_ref.current.value;
     const to = applicable_to_ref.current.value;
 
+    if (application === "" || !from || !to) {
+      alert("Enter leave details");
+      return;
+    }
+
+    const subject = application.match(/[Ss]ubject\s*:\s*(.*)\n/)[1];
+
     // upload to database
     const leave = {
-      applicant: userCreds, 
-      subject: subject, 
-      application: application, 
-      applicable_from: from, 
+      applicant: userData,
+      subject: subject,
+      application: application,
+      applicable_from: from,
       applicable_to: to
     }
 
-    console.log(leave)
-
-    // const response = await fetch("http://localhost:8000/upload-leave", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify()
-    // })
+    const response = await fetch("http://localhost:8000/upload-leave", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(leave)
+    })
+    const resdata = await response.json();
+    alert(resdata.message);
   }
 
   return (
@@ -49,21 +69,29 @@ const LeaveBox = ({
       <div className="card">
         <h3>Leave History</h3>
         <p>
-          Leaves this month: <span>{leavesThisMonth}</span>
+          Leaves this month: <span>{leaveHistory.length}</span>
         </p>
 
         {/* Leave Status */}
         <h3>Leave Status</h3>
         <div className="leave-status">
-          <p>
-            <span>Date:</span> {leaveDate}
-          </p>
-          <p>
-            <span>Sub:</span> {leaveSubject}
-          </p>
-          <p>
-            <span>Status:</span> {leaveStatus}
-          </p>
+          {
+            leaveHistory[0]?.status === "Pending" ? (
+              <>
+                <p>
+                  <span>Date:</span> {new Date(leaveHistory[0].created_at).toLocaleString("en-IN")}
+                </p>
+                <p>
+                  <span>Sub:</span> {leaveHistory[0].subject}
+                </p>
+                <p>
+                  <span>Status:</span> {leaveHistory[0].status}
+                </p>
+              </>
+            ) : (
+              <></>
+            )
+          }
         </div>
 
         {/* Submit Leave */}
@@ -73,16 +101,16 @@ const LeaveBox = ({
           <div className="flex gap-4 my-4">
             <div className="flex flex-col">
               <label>From</label>
-              <input ref={applicable_from_ref} name="applicable_from" type="date" />
+              <input ref={applicable_from_ref} name="applicable_from" type="date" required />
             </div>
 
             <div className="flex flex-col">
               <label>To</label>
-              <input ref={applicable_to_ref} name="applicable_to" type="date" />
+              <input ref={applicable_to_ref} name="applicable_to" type="date" required />
             </div>
           </div>
 
-          <textarea ref={applicationRef} name="leave_application" placeholder="Type......"></textarea>
+          <textarea ref={applicationRef} name="leave_application" placeholder="Type......" required></textarea>
 
           <div className="submit-row">
             <button
