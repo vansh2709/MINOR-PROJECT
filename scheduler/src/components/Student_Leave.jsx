@@ -63,16 +63,19 @@ const LeaveBox = ({
   }
 
   return (
-    <div className="left-column">
+    <div className="leave-submission">
 
       {/* Leave History */}
-      <div className="card">
+      <div className="leave-box">
+        <div className="leave-history">
         <h3>Leave History</h3>
         <p>
           Leaves this month: <span>{leaveHistory.length}</span>
         </p>
+        </div>
 
         {/* Leave Status */}
+        <div className="leave-status">
         <h3>Leave Status</h3>
         <div className="leave-status">
           {
@@ -93,9 +96,10 @@ const LeaveBox = ({
             )
           }
         </div>
+        </div>
 
         {/* Submit Leave */}
-        <div className="card submit-leave">
+        <div className="submit-leave">
           <h3>Submit Leave</h3>
 
           <div className="flex gap-4 my-4">
@@ -110,7 +114,7 @@ const LeaveBox = ({
             </div>
           </div>
 
-          <textarea ref={applicationRef} name="leave_application" placeholder="Type......" required></textarea>
+          <textarea class="input-box" ref={applicationRef} name="leave_application" placeholder="Type......" required></textarea>
 
           <div className="submit-row">
             <button
