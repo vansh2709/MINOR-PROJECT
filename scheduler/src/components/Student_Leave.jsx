@@ -102,15 +102,15 @@ const LeaveBox = ({
         <div className="submit-leave">
           <h3>Submit Leave</h3>
 
-          <div className="flex gap-4 my-4">
-            <div className="flex flex-col">
+          <div className="row2">
+            <div className="other">
               <label>From</label>
-              <input ref={applicable_from_ref} name="applicable_from" type="date" required />
+              <input className="select-box ref={applicable_from_ref} name="applicable_from" type="date" required />
             </div>
 
-            <div className="flex flex-col">
+            <div className="other">
               <label>To</label>
-              <input ref={applicable_to_ref} name="applicable_to" type="date" required />
+              <input className="select-box ref={applicable_to_ref} name="applicable_to" type="date" required />
             </div>
           </div>
 
