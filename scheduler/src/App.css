@@ -144,6 +144,50 @@
     border-radius: 10px;
     width: 100%;
 }
+/* Main grid: Row 1 layout (1:4 ratio) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-auto-rows: auto;
+  gap: 20px;
+  padding: 20px;
+  align-items: start;
+}
+
+/* Explicit placing of Row 1 items */
+#profile {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#timetable {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* Row 2 — full width wrapper */
+.row2 {
+  grid-column: 1 / -1;  /* stretch across both columns */
+  grid-row: 2;          /* lock to second row */
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));  
+  gap: 20px;
+}
+
+/* Cards inside row 2 */
+.row2 .card {
+  min-height: 120px;  /* auto-scaling height */
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:0 2px 8px black;
+
+  background: #ffffff;
+  border-radius: 10px;
+
+}
 
 .dashboard-content{
     display: grid;
@@ -152,6 +196,10 @@
     gap: 20px;
     padding: 20px;
 }
+.row2 {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
 .field-sections{
     margin: 20px;
     border-radius: 5px;
@@ -177,13 +225,10 @@
 }
 
 .announcer{
-    background:white;
   padding:15px;
   border-radius:10px;
-  box-shadow:0 2px 8px black;
   width:100%;
   max-width: 600px;
-  margin:20px;
   text-align:center;
 }
 .input-box{
@@ -196,26 +241,20 @@
     text-align: center;
     height: fit-content;
 }
-.sidebar {
-  width: 280px;
-  grid-column: 1;
-  grid-row: 1;    /* Half the screen width */
-  height: fit-content;  /* Full screen height */
-  background: #ffffff;
-  box-shadow:0 2px 8px black;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  align-items: center;
-  
-}
 
 .profile-card{
-    align-items: center;
     text-align: center;
     margin-bottom: 20px;
     align-content: center;
+    width: 280px;
+    height: fit-content;  /* Full screen height */
+    background: #ffffff;
+    box-shadow:0 2px 8px black;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  
 }
 
 .avatar{
@@ -238,22 +277,14 @@
     align-items: center;
     margin-top: 20px;
     box-shadow:0 2px 8px black;
-    
-
-}
-.other-cards{
-    margin-top: 20px;
-    grid-column: span 2;
-    display: block;
-    box-shadow:0 2px 8px black;
-
 }
 
-.teacher-availability{
+.Teacher-availability{
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 20px;
-    width: 80%;
+    width: 100%;
+    max-width: 350px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
 .availability-container{
@@ -271,7 +302,7 @@
 
 .Student-leave-management{
     padding: 20px;
-    width: 95%;
+    width: 100%;
     align-items: center;
     align-content: center;
     text-align: center;    
@@ -349,10 +380,14 @@
 }
 
 .leave-box{
-    margin: 10px 0;
+    display:grid;
+    grid-template-rows: 1fr;
     padding: 10px;
-    width: 300px;
     font-size: 1rem;
+    width: fit-content;
+    text-align: center;
+    gap: 15vw;
+    margin-bottom: 20px;
 }
 
 .register-page{
@@ -366,10 +401,27 @@
   text-align:center;
 }
 
-.submiit-leave{
+.submit-leave{
     margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;    
+    box-shadow: 2px 2px 4px rgb(0, 0, 0);
+    width: 100%;
+    text-align: center;
+    
+    
 }
 
+.leave-history{
+    margin-top: 10px;
+    grid-row: 1;
+    grid-column: 1;
+    text-align: left;
+}
 .leave-status{
     margin-top: 10px;
+    grid-row: 1;
+    grid-column: 2;
+    text-align: left;
 }
