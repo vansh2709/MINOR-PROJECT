@@ -6,8 +6,9 @@ const Announcements = ({ announcements }) => {
   );
 
   return (
-    <div className="announcements-container">
-      <h2>Announcements</h2>
+    <div className="announcements">
+      <h2 className="headings">Announcements</h2><br/>
+      <div className="announcements-container">
       <ul>
         {announcements && announcements.length > 0 ? (
           announcements.map((item, index) => (
@@ -17,6 +18,7 @@ const Announcements = ({ announcements }) => {
           <li>No announcements available</li>
         )}
       </ul>
+      </div>
     </div>
   );
 };
