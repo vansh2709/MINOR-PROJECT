@@ -7,6 +7,7 @@ export const GlobalProvider = ({ children }) => {
 
     const [userData, setUserData] = useState();
     const [classes, setClasses] = useState({});
+    const [leaveHistory, setLeaveHistory] = useState([]);
 
     const loadTimetable = async (userCreds) => {
         const days = [
@@ -95,7 +96,7 @@ export const GlobalProvider = ({ children }) => {
                         topics: userCreds?.role === "Student" ? [
                             `year_${userCreds?.year}`,
                             `branch_${userCreds?.branch}`,
-                            `${userCreds?.branch}_year_${userCreds?.year}_section_${userCreds?.section}`
+                            `${userCreds?.branch}_${userCreds?.year}_${userCreds?.section}`
                         ] : ["teachers"]
                     })
                 })

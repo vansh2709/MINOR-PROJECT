@@ -3,6 +3,7 @@ const mysql = require("mysql2/promise");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const admin = require("./firebaseAdmin");
+const cron = require("node-cron");
 
 const app = express();
 app.use(express.json());
@@ -22,8 +23,7 @@ app.post("/save-fcm-token", async (req, res) => {
   const query = "update users set fcm_token = ? where email = ?";
 
   // subscribe to topics
-  console.log(topics)
-  topics.forEach( async (topic)=>{
+  topics.forEach(async (topic) => {
     await admin.messaging().subscribeToTopic(token, topic);
   })
 
@@ -232,21 +232,34 @@ app.get("/get-timetable", async (req, res) => {
 })
 
 // fetch leave
-app.get("/fetch-leaves", async (req, res)=>{
+app.get("/fetch-leaves", async (req, res) => {
   const { user_data } = req.query;
   const userData = JSON.parse((user_data));
-  
+
   let query = "";
-  if(userData.role === "Student"){
+  let values = [];
+  if (userData.role === "Student") {
     query = "select name, year, branch, student_id, subject, application, applicable_from, applicable_to, status, created_at from leaves where student_id = ? and month(created_at) = month(current_date()) and year(created_at) = year(current_date()) order by created_at desc";
+    values = [userData.student_id]
+  } else {
+    query = `SELECT DISTINCT l.name, l.year, l.branch, l.student_id, l.subject, l.application, l.applicable_from, applicable_to, 
+        l.status, l.created_at
+      FROM leaves l
+      JOIN schedule s 
+        ON l.year = s.year 
+        AND l.branch = s.branch_id
+        AND l.section = s.section
+      WHERE s.teacher_id = ?;
+    `;
+    values = [userData.teacher_id]
   }
 
   try {
-    const [ leaves ] = await pool.query(query, [ userData.student_id ]);
-    res.json({success: true, data: leaves, message: "leaves fetched"});
+    const [leaves] = await pool.query(query, values);
+    res.json({ success: true, data: leaves, message: "leaves fetched" });
   } catch (err) {
     console.log(err);
-    res.json({success: false, message: err});
+    res.json({ success: false, message: err });
   }
 })
 
@@ -285,13 +298,40 @@ app.post("/upload-leave", async (req, res) => {
   try {
     const response = await pool.query(query, values);
     console.log(response)
-    res.json({success: true, message: "Leave submitted successfully"});
+    res.json({ success: true, message: "Leave submitted successfully" });
   } catch (err) {
-    if(err.code === "ER_DUP_ENTRY"){
-      res.json({success: false, message: "Duplicate application found"})
+    if (err.code === "ER_DUP_ENTRY") {
+      res.json({ success: false, message: "Duplicate application found" })
+      return;
     }
     console.log(err)
-    res.json({success: false, message: "error while submitting"})
+    res.json({ success: false, message: "error while submitting" })
+  }
+})
+
+
+// modify leave ( reject approve )
+app.get("/verify-leave", async (req, res) => {
+  const {
+    "x-action": action,
+    "x-applicant": applicant,
+    "x-verifier": verifier,
+  } = req.headers;
+
+  console.log(action, applicant, verifier)
+  const query = `update leaves l set l.status = ? where l.student_id = ? 
+  and exists (
+    select 1
+    from users u
+    where u.teacher_id = ?
+      and (u.role = 'Teacher' or u.role = 'HOD' or u.role = 'Director')
+  )`
+
+  try {
+    const response = await pool.query(query, [action, applicant, verifier])
+    res.json({success: true, message: "successfully " + action});
+  } catch (error) {
+    res.json({success: false, message: "error occuered"});
   }
 })
 
@@ -320,10 +360,59 @@ app.post("/announce", async (req, res) => {
 
 
 // notify for next day timetable
-async function notifyTimetable(params) {
-  const topics = {
-    "1year": ["cse_year"]
-  }
+// Night 10:00 pm
+cron.schedule("0 22 * * *", () => {
+  console.log("Running task at 10:00 PM every day");
+  notifyTimetable();
+}, { timezone: "Asia/Kolkata" })
+
+// Morning 08:00 am
+cron.schedule("0 8 * * *", () => {
+  console.log("Running task at 08:00 AM every day");
+  notifyTimetable();
+}, { timezone: "Asia/Kolkata" })
+
+async function notifyTimetable() {
+  const years = [1, 2, 3, 4];
+  const branches = ["CSE", "AI", "RA", "ME", "CE", "BCA"];
+  const sections = ["A"];
+
+  const topics = {};
+
+  years.forEach(year => {
+    const key = `${year}`;
+    topics[key] = [];
+
+    branches.forEach(branch => {
+      // topics[key].push(`${branch}_${year}`);
+      sections.forEach(async section => {
+        topics[key].push(`${branch}_${year}_${section}`);
+        const topic = `${branch}_${year}_${section}`;
+
+        // send timetable notification
+        const today = new Date();
+        const dayName = today.toLocaleString('en-US', { weekday: 'long' });
+
+        const [classes] = await pool.query("select period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? and day = ? order by period_id", [year, branch, section, dayName])
+
+        let message = "";
+
+        classes.forEach((clas) => {
+          message += `${clas.period_id}) ${clas.subject_id} • ${clas.subject_name} - ${clas.teacher_name}\n`
+        })
+
+        if (classes.length > 0) {
+          await admin.messaging().send({
+            notification: {
+              title: "Next Day Classes",
+              body: message
+            },
+            topic: topic
+          });
+        }
+      });
+    });
+  });
 }
 
 
