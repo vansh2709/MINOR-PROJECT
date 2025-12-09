@@ -1,11 +1,11 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Inter", Arial, sans-serif;
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", Arial, sans-serif;
 }
 
-.header {
+.header{
     display: flex;
     background-color: #4CAF50;
     color: white;
@@ -13,80 +13,74 @@
     text-align: center;
     height: 100px;
 }
-
-.footer {
+.footer{
     background-color: #4CAF50;
     padding: 60px;
     text-align: center;
     justify-content: center;
     font-size: 1rem;
     width: 100%;
+
 }
 
-.Title {
+.Title{
     font-size: 3rem;
     font-weight: bold;
-    margin-right: 20px;
+    margin-right: 20px;    
     justify-self: left;
-    left: 20px;
+    left:20px;
     padding: 10px;
 }
-
-.headings {
+.headings{
     font-size: 2rem;
     font-weight: bold;
-    margin: 20px;
+    margin: 20px;    
     justify-self: center;
     padding: 10px;
 }
-
-.label {
+.label{
     font-weight: bold;
     font-size: 1.2rem;
-    margin: 5px;
-
+    margin:5px;
+    
 }
 
-.header-links {
+.header-links{
     margin: 10px 10px;
     padding: 10px;
     position: relative;
     left: 40%;
     font-size: 1.5rem;
-    gap: 15px;
+    gap: 15px;    
 }
-
-.links {
+.links{
     margin: 0 10px;
     text-decoration: none;
     padding: 10px;
     color: rgb(249, 249, 249);
 }
-
-.links:hover {
+.links:hover{
     text-decoration: underline;
     color: #0a1a1f;
     cursor: pointer;
 }
-
-.content {
+.content{
     border: #000000 10px solid;
 
 }
 
-.card {
+.card{
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 15px;
     margin: 10px 0;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
-
-.submit-row {
+.submit-row{
     margin-top: 10px;
 }
 
-.select-box {
+.select-box{
     padding: 10px;
     padding-left: 5px;
     width: fit-content;
@@ -96,12 +90,12 @@
     margin: 10px;
 }
 
-.left-coloumn {
+.left-coloumn{
     flex: 1;
     margin-right: 20px;
 }
 
-.approve-btn {
+.approve-btn{
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -111,8 +105,7 @@
     margin: 5px;
     border-radius: 15px;
 }
-
-.reject-btn {
+.reject-btn{
     background-color: #f44336;
     color: white;
     border: none;
@@ -123,23 +116,23 @@
     margin: 5px;
 }
 
-.approve-btn:hover {
+.approve-btn:hover{
     background-color: #207724;
 }
 
-.reject-btn:hover {
+.reject-btn:hover{
     background-color: #730000;
-}
-
-.button {
+} 
+.button{
     background-color: #008CBA;
     color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    margin: 10px;
 }
 
-.logout-btn {
+.logout-btn{
     background-color: #ff0000;
     color: white;
     border: none;
@@ -149,7 +142,7 @@
     right: 10px;
 }
 
-.dashboard {
+.dashboard{
     border-radius: 10px;
     width: 100%;
 }
@@ -198,15 +191,13 @@
 
 }
 
-.dashboard-content {
+.dashboard-content{
     display: grid;
-    grid-template-columns: 1fr 4fr;
-    /* Ratio 1:4 */
+    grid-template-columns: 1fr 4fr; /* Ratio 1:4 */
     grid-auto-rows: auto;
     gap: 20px;
     padding: 20px;
 }
-
 .row2 {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
@@ -217,34 +208,29 @@
     padding: 10px;
 }
 
-.announcements-container {
+.announcements{
+    height: fit-content;
+    align-self: start;
+}
+.announcements-container{
     display: flex;
+    align-items: center;
+    text-align: left;
 }
 
-.announcements-container ul {
+.announcements-container ul{
     font-size: 1rem;
 }
 
-.login-page {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px black;
-    width: 100%;
-    max-width: 900px;
-    margin: 40px auto;
-    text-align: center;
-}
-
-.announcer {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px black;
-    width: 100%;
-    max-width: 600px;
-    margin: 20px;
-    text-align: center;
+.login-page{
+    background:white;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 2px 8px black;
+  width:100%;
+  max-width:900px;
+  margin:40px auto;
+  text-align:center;
 }
 
 .announcer{
@@ -254,8 +240,7 @@
   max-width: 600px;
   text-align:center;
 }
-
-.input-box {
+.input-box{
     margin: 10px;
     padding: 10px;
     margin-bottom: 15px;
@@ -264,27 +249,6 @@
     border-radius: 5px;
     text-align: center;
     height: fit-content;
-}
-
-.sidebar {
-    width: 280px;
-    grid-column: 1;
-    grid-row: 1;
-    /* Half the screen width */
-    height: fit-content;
-    /* Full screen height */
-    background: #ffffff;
-    box-shadow: 0 2px 8px black;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    align-items: center;
-
-}
-
-.profile-card {
-    align-items: center;
 }
 
 .profile-card{
@@ -302,280 +266,115 @@
   
 }
 
-.avatar {
+.avatar{
     border-radius: 50%;
     width: 100px;
     height: 100px;
 }
 
-.info-list {
+.info-list{
     padding: 0;
 }
 
-.info-item {
+.info-item{
     margin: 5px 0;
 }
 
-.student-leave-container {
+.student-leave-container{
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
-
-    box-shadow: 0 2px 8px black;
-}
-
-.other-cards {
-    margin-top: 20px;
-    grid-column: span 2;
-    display: block;
-    box-shadow: 0 2px 8px black;
-
-}
-
-.teacher-availability {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 20px;
-    width: 80%;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     box-shadow:0 2px 8px black;
 }
 
 .Teacher-availability{
-    border: 1px solid #ccc;
     border-radius: 5px;
     padding: 20px;
     width: 100%;
-    max-width: 350px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    
 }
 
-.availability-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.availability-options {
-    margin: 10px 0;
-    padding: 10px;
-    width: 300px;
-    font-size: 1rem;
-}
-
-.Student-leave-management {
+.Student-leave-management{
     padding: 20px;
     width: 100%;
     align-items: center;
     align-content: center;
-    text-align: center;
-
+    text-align: center;    
+    
 }
 
-
-
-/* its rahul here */
-.leave-container {
-    width: auto;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-.leave-container h2 {
-    margin-bottom: 16px;
-}
-
-.leave-container .card {
-    background: #e8f6ff;
-    border-radius: 14px;
-    padding: 14px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-.leave-container .card-left p {
-    margin: 2px 0;
-}
-
-.leave-container .card-right {
-    text-align: right;
-}
-
-.leave-container .view-app {
-    background-color: transparent;
-    border: 0;
-    font-size: 12px;
-    color: #0066cc;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.leave-container .leaves-count {
-    font-size: 12px;
-    margin: 8px 0;
-}
-
-.leave-container .btn-group {
-    margin-top: 6px;
-}
-
-.leave-container .reject,
-.leave-container .approve {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-left: 4px;
-    font-weight: bold;
-}
-
-.leave-container .reject {
-    background: #ff5b5b;
-    color: white;
-}
-
-.leave-container .approve {
-    background: #3fbf5b;
-    color: white;
-}
-
-/* selected leave */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-overlay hr {
-    margin: 1rem 0;
-}
-
-.modal {
-    background: #fff;
-    width: 600px;
-    max-height: 80vh;
-    padding: 20px;
-    border-radius: 10px;
-    overflow-y: auto;
-    position: relative;
-}
-
-.application-text {
-    white-space: pre-wrap;
-    margin-top: 10px;
-    line-height: 1.5;
-}
-
-.close-btn {
-    background-color: #ff5b5b;
-    border: 0;
-    border-radius: 6px;
-    color: white;
-    margin-top: 15px;
-    padding: 8px 14px;
-    cursor: pointer;
-    float: right;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-.schedule-container {
+.schedule-container{
     display: flex;
     flex-direction: column;
     align-items: center;
-    grid-column: 2;
+    grid-column:2;
     grid-row: 1;
     background-color: rgb(255, 255, 255);
-    box-shadow: 0 2px 8px black;
+    box-shadow:0 2px 8px black;
 
     border-radius: 10px;
     padding: 15px;
 }
-
-.schedule-table {
+.schedule-table{
     border-collapse: collapse;
     width: 100%;
     max-width: 600px;
     margin-top: 10px;
     padding: 10px;
 }
-
-.table-time {
+.table-time{
     background-color: #67e66d;
     font-weight: bold;
     font-size: 1.2rem;
     border: 2px solid #ffffff;
-    min-width: 90px;
-    max-width: 90px;
+    min-width: 90px ;
+    max-width: 90px ;
     height: auto;
     padding: 5px;
     border-radius: 15px;
     box-shadow: #000000 2px 2px 5px rgb(0, 0, 0);
 }
 
-.table-row {
-    min-width: 90px;
-    max-width: 90px;
+.table-row{
+    min-width: 90px ;
+    max-width: 90px ;
     height: auto;
 }
-
-.timetable-section {
-    left: 280px;
-    top: 90px;
-
+.timetable-section{
+    left:280px;
+    top:90px;
+    
 }
 
-.subject-cell {
+.subject-cell{
     padding: 10px;
     border: 1px solid #ffffff;
     text-align: center;
     background-color: #555555;
     border-radius: 15px;
-
+    
 }
-
-.Day-label {
+.Day-label{
     font-weight: bold;
 }
 
 
-.subject-code {
+.subject-code{
     font-weight: bold;
     padding: 5px;
     border-bottom: #000000 2px solid;
     margin-bottom: 5px;
 }
 
-.Teacher-name {
+.Teacher-name{
     border-top: #000000 2px solid;
     font-style: italic;
     margin-top: 5px;
-    padding-top: 5px;
+    padding-top:5px;
 }
 
-.leave-box {
-    margin: 10px 0;
-}
 .leave-box{
     display:grid;
     grid-template-rows: 1fr;
@@ -587,19 +386,17 @@
     margin-bottom: 20px;
 }
 
-.register-page {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px black;
-    width: 100%;
-    max-width: 900px;
-    margin: 40px auto;
-    text-align: center;
+.register-page{
+    background:white;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 2px 8px black;
+  width:100%;
+  max-width:900px;
+  margin:40px auto;
+  text-align:center;
 }
 
-.submiit-leave {
-}
 .submit-leave{
     margin-top: 10px;
     border: 1px solid #ccc;
@@ -610,10 +407,6 @@
     text-align: center;
     
     
-}
-
-.leave-status {
-    margin-top: 10px;
 }
 
 .leave-history{
@@ -629,3 +422,36 @@
     text-align: left;
 }
 
+/* ⬅ makes the circle + text align on one line */
+.radio-option {
+  display: inline-flex;
+  gap: 8px;
+  margin: 10px;
+  
+}
+
+/* Hide the native radio button */
+.radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Custom radio shape */
+.radio-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #22c55e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* Checked state */
+.radio-option input[type="radio"]:checked + .radio-custom {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  box-shadow: 0 0 4px rgba(22, 163, 74, 0.5);
+}
