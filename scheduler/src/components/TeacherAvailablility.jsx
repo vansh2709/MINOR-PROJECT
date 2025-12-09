@@ -2,12 +2,16 @@ import React, { useState } from "react";
 
 const TeacherAvailability1 = ({ onSubmit }) => {
   const [availability, setAvailability] = useState("");
+  const [lectureCount, setLectureCount] = useState(""); 
   const [duration, setDuration] = useState("");
   const [calendar, setCalendar] = useState("");
 
   const handleSubmit = () => {
     if (!availability) return alert("Select availability.");
-  
+
+    if (availability === "lectures" && !lectureCount)
+      return alert("Select number of lectures.");
+
     if (availability === "entireday" && !duration)
       return alert("Select duration.");
 
@@ -16,32 +20,35 @@ const TeacherAvailability1 = ({ onSubmit }) => {
 
     onSubmit({
       availability,
+      lectureCount: availability === "lectures" ? lectureCount : null,
       duration: availability === "entireday" ? duration : null,
       expires_at: calendar,
     });
 
     setAvailability("");
+    setLectureCount("");
     setDuration("");
     setCalendar("");
   };
 
   return (
     <div className="Teacher-availability">
-      <h3>Teacher Availability</h3>
+      <h3 className="headings">Teacher Availability</h3>
 
       {/* Availability Options */}
-      <label>
+      <label className="radio-option label">
         <input
           type="radio"
           name="availability"
-          value="1lecture"
-          checked={availability === "1lecture"}
+          value="lectures"
+          checked={availability === "lectures"}
           onChange={(e) => setAvailability(e.target.value)}
         />
-        1st Lecture
+        <span class="radio-custom"></span>
+        Single hour leave
       </label>
 
-      <label>
+      <label className="radio-option label">
         <input
           type="radio"
           name="availability"
@@ -49,10 +56,11 @@ const TeacherAvailability1 = ({ onSubmit }) => {
           checked={availability === "entireday"}
           onChange={(e) => setAvailability(e.target.value)}
         />
+        <span class="radio-custom"></span>
         Entire Day (Substitute Needed)
       </label>
 
-      <label>
+      <label className="radio-option label">
         <input
           type="radio"
           name="availability"
@@ -60,12 +68,25 @@ const TeacherAvailability1 = ({ onSubmit }) => {
           checked={availability === "leave"}
           onChange={(e) => setAvailability(e.target.value)}
         />
+        <span class="radio-custom"></span>
         Taking Leave (Assign Substitute)
       </label>
 
-      {/* Duration dropdown for Entire Day */}
+      {/* the fuckin dropdown */}
+      {availability === "lectures" && (
+        <select className="select-box" value={lectureCount} onChange={(e) => setLectureCount(e.target.value)}>
+          <option value="">Select Number of Lectures</option>
+          <option value="1">1 Lecture</option>
+          <option value="2">2 Lectures</option>
+          <option value="3">3 Lectures</option>
+          <option value="4">4 Lectures</option>
+          <option value="5">5 Lectures</option>
+        </select>
+      )}
+
+      {/* duration dropdown for entire fuckin day */}
       {availability === "entireday" && (
-        <select value={duration} onChange={(e) => setDuration(e.target.value)}>
+        <select className="select-box" value={duration} onChange={(e) => setDuration(e.target.value)}>
           <option value="">Select Duration</option>
           <option value="1hour">1 Hour</option>
           <option value="2hours">2 Hours</option>
@@ -73,7 +94,7 @@ const TeacherAvailability1 = ({ onSubmit }) => {
         </select>
       )}
 
-      {/* CALENDAR INPUT FOR LEAVE / ENTIRE DAY */}
+      {/* Calendar input for some lectures / entire day */}
       {(availability === "leave" || availability === "entireday") && (
         <div>
           <input
@@ -85,8 +106,8 @@ const TeacherAvailability1 = ({ onSubmit }) => {
           />
         </div>
       )}
-
-      <button onClick={handleSubmit}>Submit</button>
+      <br/>
+      <button className="button" onClick={handleSubmit}>Submit</button>
     </div>
   );
 };
