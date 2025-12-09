@@ -63,16 +63,19 @@ const LeaveBox = ({
   }
 
   return (
-    <div className="left-column">
+    <div className="leave-submission">
 
       {/* Leave History */}
-      <div className="card">
+      <div className="leave-box">
+        <div className="leave-history">
         <h3>Leave History</h3>
         <p>
           Leaves this month: <span>{leaveHistory.length}</span>
         </p>
+        </div>
 
         {/* Leave Status */}
+        <div className="leave-status">
         <h3>Leave Status</h3>
         <div className="leave-status">
           {
@@ -93,24 +96,25 @@ const LeaveBox = ({
             )
           }
         </div>
+        </div>
 
         {/* Submit Leave */}
-        <div className="card submit-leave">
+        <div className="submit-leave">
           <h3>Submit Leave</h3>
 
-          <div className="flex gap-4 my-4">
-            <div className="flex flex-col">
+          <div className="row2">
+            <div className="other">
               <label>From</label>
-              <input ref={applicable_from_ref} name="applicable_from" type="date" required />
+              <input className="select-box" ref={applicable_from_ref} name="applicable_from" type="date" required />
             </div>
 
-            <div className="flex flex-col">
+            <div className="other">
               <label>To</label>
-              <input ref={applicable_to_ref} name="applicable_to" type="date" required />
+              <input className="select-box" ref={applicable_to_ref} name="applicable_to" type="date" required />
             </div>
           </div>
 
-          <textarea ref={applicationRef} name="leave_application" placeholder="Type......" required></textarea>
+          <textarea class="input-box" ref={applicationRef} name="leave_application" placeholder="Type......" required></textarea>
 
           <div className="submit-row">
             <button

@@ -72,6 +72,7 @@ function LoginPage() {
               name='email'
               type="email"
               id="email"
+              required
               placeholder="tom.holand@mcu.com"
               onChange={validate}
               className={`input-box border ${isEmailValid === true
@@ -99,6 +100,7 @@ function LoginPage() {
               name='password'
               type="password"
               id="password"
+              required
               placeholder="tom@1992#"
               onChange={validate}
             />
