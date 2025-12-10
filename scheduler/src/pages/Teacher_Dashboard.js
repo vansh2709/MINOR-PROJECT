@@ -31,11 +31,10 @@ const TeacherDashboard = () => {
         <div className="timetable-section">
           <TimeTable />
         </div>
-        <div className="row2">
-        {/* Right Section – Availability & Leave Management */}
-        <div className="card other ">
+        <div className="card row1 ">
           <TeacherAvailability />
-        </div>
+        </div>            
+        <div className="row2">
         <div className="card other">
           <Announce announcements={announcements} />
         </div>
