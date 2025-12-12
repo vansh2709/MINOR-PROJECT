@@ -50,8 +50,6 @@ function RegisterPage() {
 
   return (
     <>
-      <Header />
-
       <RegisterBox
         selectedRole={selectedRole}
         formData={formData}
@@ -59,8 +57,6 @@ function RegisterPage() {
         handleRoleChange={handleRoleChange}
         handleInputChange={handleInputChange}
       />
-
-      <Footer />
     </>
   );
 }

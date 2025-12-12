@@ -151,10 +151,27 @@ app.get("/get-timetable", async (req, res) => {
   try {
     const { year, branch, section = "A", day, teacher_id, teacher_name } = req.query;
 
+    // check if cancelled periods are expired or not
+    const cancel_cancelled_class_query = `UPDATE schedule
+      SET cancelled = 0,
+          cancelled_from = NULL,
+          cancelled_to = NULL,
+          substitute_teacher_id = NULL,
+          substitute_teacher_name = NULL
+      WHERE CURDATE() > DATE(cancelled_to);
+    `;
+
+    try {
+      const response1 = await pool.query(cancel_cancelled_class_query);
+      console.log("here", response1);
+    } catch (error) {
+      throw error;
+    }
+
     if (teacher_id) {
 
       if (day === "" || day === undefined) {
-        const query = `select period_id, subject_id, subject_name, teacher_name from schedule where teacher_id = ? order by period_id`;
+        const query = `select day, period_id, subject_id, subject_name, teacher_name, cancelled from schedule where teacher_id = ? order by period_id`;
         const [rows] = await pool.query(query, [
           year, branch, section,
         ]);
@@ -177,7 +194,7 @@ app.get("/get-timetable", async (req, res) => {
           data: timetable
         });
       } else {
-        const query = `select period_id, subject_id, subject_name, teacher_name from schedule where teacher_id = ? and day = ? order by period_id`;
+        const query = `select day, period_id, subject_id, subject_name, teacher_name, year, branch_id, section, cancelled from schedule where teacher_id = ? and day = ? order by period_id`;
         const [classes] = await pool.query(query, [teacher_id, day
         ]);
 
@@ -191,7 +208,7 @@ app.get("/get-timetable", async (req, res) => {
 
     } else {
       if (day === "" || day === undefined) {
-        const query = `select day, period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? order by day, period_id`;
+        const query = `select day, period_id, subject_id, subject_name, teacher_name, cancelled from schedule where year = ? and branch_id = ? and section = ? order by day, period_id`;
         const [rows] = await pool.query(query, [
           year, branch, section,
         ]);
@@ -215,7 +232,7 @@ app.get("/get-timetable", async (req, res) => {
         });
 
       } else {
-        const query = `select period_id, subject_id, subject_name, teacher_name from schedule where year = ? and branch_id = ? and section = ? and day = ? order by period_id`;
+        const query = `select day, period_id, subject_id, subject_name, teacher_name, cancelled from schedule where year = ? and branch_id = ? and section = ? and day = ? order by period_id`;
         const [classes] = await pool.query(query, [
           year, branch, section, day
         ]);
@@ -282,17 +299,6 @@ app.post("/upload-leave", async (req, res) => {
       status
     ) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     values = [applicant?.name, applicant?.year, applicant?.branch, applicant?.student_id, subject, application, applicable_from, applicable_to, "Pending"];
-  } else {
-    `insert into leaves (
-      name,  
-      teacher_id, 
-      subject, 
-      application, 
-      applicable_from, 
-      applicable_to, 
-      status
-    ) values (?, ?, ?, ?, ?, ?, ?)`;
-    values = [applicant?.name, applicant?.teacher_id, subject, application, applicable_from, applicable_to, "Pending"];
   }
 
   try {
@@ -310,7 +316,7 @@ app.post("/upload-leave", async (req, res) => {
 })
 
 
-// modify leave ( reject approve )
+// verify leave ( reject approve )
 app.get("/verify-leave", async (req, res) => {
   const {
     "x-action": action,
@@ -329,9 +335,119 @@ app.get("/verify-leave", async (req, res) => {
 
   try {
     const response = await pool.query(query, [action, applicant, verifier])
-    res.json({success: true, message: "successfully " + action});
+    res.json({ success: true, message: "successfully " + action });
   } catch (error) {
-    res.json({success: false, message: "error occuered"});
+    res.json({ success: false, message: "error occuered" });
+  }
+})
+
+// teacher availability
+app.post("/teacher-availability", async (req, res) => {
+  const { applicant, leave_type, classes, from, to, on } = req.body;
+  let classess;
+
+  // save leave to leaves table
+  const query1 = `insert into leaves (
+    name,  
+    teacher_id, 
+    subject, 
+    application, 
+    applicable_from, 
+    applicable_to, 
+    status
+  ) values (?, ?, ?, ?, ?, ?, ?)`;
+
+  const values1 = [applicant.name, applicant?.teacher_id, "Priviliged", "Priviliged", from || on, to || on, "Approved"];
+
+  let query2 = "";
+  let values2 = [];
+
+  // if leave type = period
+  if (leave_type == "period") {
+    // Build tuple placeholders
+    const tuplePlaceholders = classes.map(() => "(?, ?, ?, ?, ?, ?)").join(", ");
+
+    // Flatten all values into one array
+    const tupleValues = classes.flatMap(c => [
+      c.day,
+      c.period,
+      c.code,
+      c.branch,
+      c.year,
+      c.section
+    ]);
+
+    query2 = `UPDATE schedule
+    SET cancelled = ?, cancelled_from = ?, cancelled_to = ?
+    WHERE teacher_id = ?
+      AND (day, period_id, subject_id, branch_id, year, section) IN (${tuplePlaceholders});
+    `;
+
+    values2 = [
+      1,
+      from,
+      to,
+      applicant.teacher_id,
+      ...tupleValues
+    ];
+  } else {
+    // if leave type day | duration then check for affected periods
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const duration = (new Date(to || on) - new Date(from || on)) / (1000 * 3600 * 24) + 1;
+    const int_day = new Date(from || on).getDay();
+
+    const affected_days = new Set();;
+    for (let i = int_day; i < int_day + duration; i++) {
+      index = (i - 1) % 7
+      affected_days.add(days[index])
+    }
+
+    console.log(affected_days)
+
+    query2 = `update schedule set cancelled = ?, cancelled_from = ?, cancelled_to = ? where teacher_id = ? and day in (${Array.from(affected_days).map(ad => "?").join(",")})`;
+
+    values2 = [1, from || on, to || on, applicant.teacher_id, ...affected_days];
+  }
+
+  try {
+    // const response1 = await pool.query(query1, values1);
+    // console.log(response1);
+    const response2 = await pool.query(query2, values2);
+    console.log(response2);
+
+    // send notification to affected class
+    // fetch affetected class
+    let [classes] = await pool.query("select distinct * from schedule where day = ? and cancelled = 1 and teacher_id = ? and cancelled_from = ? and cancelled_to = ? order by year, period_id", ["Tuesday", applicant.teacher_id, from || on, to || on]);
+    
+    const notification = {};
+    classes.forEach((clas) => {
+      if (!notification[`${clas.branch_id}_${clas.year}_${clas.section}`]) {
+        notification[`${clas.branch_id}_${clas.year}_${clas.section}`] = [clas];
+      } else {
+        notification[`${clas.branch_id}_${clas.year}_${clas.section}`].push(clas);
+      }
+    })
+
+    Object.keys(notification).forEach(async (topic) => {
+      console.log(topic, `Period ${notification[topic].map((p => p.period_id)).join(", ")} of ${notification[topic][0].teacher_name} Cancelled`)
+
+      await admin.messaging().send({
+        notification: {
+          title: "Class Cancelled",
+          body: `Period ${notification[topic].map((p => p.period_id)).join(", ")} of ${notification[topic][0].teacher_name} Cancelled`
+        },
+        topic: topic
+      });
+    })
+
+    res.json({ success: true, message: "Leave saved successfully" });
+  } catch (error) {
+    console.log(error)
+    if (error.code === "ER_DUP_ENTRY") {
+      res.json({ success: false, message: "Already submitted or duplicate leave" });
+    } else {
+      res.json({ success: false, message: "Error occured" });
+    }
   }
 })
 
@@ -367,7 +483,7 @@ cron.schedule("0 22 * * *", () => {
 }, { timezone: "Asia/Kolkata" })
 
 // Morning 08:00 am
-cron.schedule("0 8 * * *", () => {
+cron.schedule("55 10 * * *", () => {
   console.log("Running task at 08:00 AM every day");
   notifyTimetable();
 }, { timezone: "Asia/Kolkata" })

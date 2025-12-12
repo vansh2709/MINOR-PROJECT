@@ -28,15 +28,32 @@ const TimeTable = ({ day = "Monday" }) => {
   ];
 
   const { classes } = AppStates();
-  
+
   const slots = defaultTimeSlots;
 
-  const SubjectCell = ({ code, name, teacher }) => (
+  const SubjectCell = ({ code, name, teacher, cancelled }) => (
     <td className="subject-cell">
+      {
+        cancelled ? (
+          <div className="cancelled-class">
+            <p>Cancelled</p>
+          </div>
+        ) : (
+          ""
+        )
+      }
       <div className="subject-box">
-        <p className="subject-code">{code}</p>
-        <p>{name}</p>
-        <p className="Teacher-name">{teacher}</p>
+        {
+          code ? (
+            <>
+              <p className="subject-code">{code}</p>
+              <p className="subject-name">{name}</p>
+              <p className="Teacher-name">{teacher}</p></>
+
+          ) : (
+            "Free"
+          )
+        }
       </div>
     </td>
   );
@@ -64,6 +81,7 @@ const TimeTable = ({ day = "Monday" }) => {
                 code={item.code}
                 name={item.name}
                 teacher={item.teacher}
+                cancelled={item.cancelled}
               />
             ))}
           </tr>

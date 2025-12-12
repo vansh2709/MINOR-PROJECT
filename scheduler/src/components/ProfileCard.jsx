@@ -15,16 +15,16 @@ const Sidebar = ({ name, email, id, onLogout }) => {
   return (
     <aside className="sidebar">
       <div className="profile-card">
-        <div>
+        <div className="avatar">
           {
             userData?.avatar ? (
               <img
-                className="avatar"
+                className=""
                 src="https://via.placeholder.com/100"
                 alt="Profile Avatar"
               />
             ) : (
-              <h3>{ userData?.name ? userData?.name[0] : "Guest" }</h3>
+              <p className="">{userData?.name ? userData?.name[0] : "Guest"}</p>
             )
           }
         </div>
@@ -40,11 +40,11 @@ const Sidebar = ({ name, email, id, onLogout }) => {
             <span>ID</span><span>: {userData?.role === "Student" ? userData?.student_id : userData?.teacher_id}</span>
           </div>
         </div>
-      </div>
 
-      <button className="logout-btn" onClick={logout}>
-        Logout
-      </button>
+        <button className="logout-btn" onClick={logout}>
+          Logout
+        </button>
+      </div>
     </aside>
   );
 };

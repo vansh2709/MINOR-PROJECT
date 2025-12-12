@@ -1,113 +1,84 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import { AppStates } from "../services/states";
 
 const TeacherAvailability1 = ({ onSubmit }) => {
-  const [availability, setAvailability] = useState("");
-  const [lectureCount, setLectureCount] = useState(""); 
-  const [duration, setDuration] = useState("");
-  const [calendar, setCalendar] = useState("");
 
-  const handleSubmit = () => {
-    if (!availability) return alert("Select availability.");
+  const { userData, classes, doFetch } = AppStates();
+  const [leaveType, setLeaveType] = useState("");
+  const [periods, setPeriods] = useState([]);
 
-    if (availability === "lectures" && !lectureCount)
-      return alert("Select number of lectures.");
+  useEffect(() => {
+    console.log(periods, leaveType)
+  }, [periods, leaveType])
 
-    if (availability === "entireday" && !duration)
-      return alert("Select duration.");
+  const handleTeacherAvailability = async (e) => {
+    e.preventDefault();
 
-    if ((availability === "leave" || availability === "entireday") && !calendar)
-      return alert("Select date & time.");
+    const form = new FormData(e.target);
+    const formData = Object.fromEntries(form.entries());
+    formData.applicant = userData;
+    formData.classes = periods;
 
-    onSubmit({
-      availability,
-      lectureCount: availability === "lectures" ? lectureCount : null,
-      duration: availability === "entireday" ? duration : null,
-      expires_at: calendar,
-    });
+    // send to server
+    const response = await doFetch("http://localhost:8000/teacher-availability", "POST", { "Content-Type": "application/json" }, JSON.stringify(formData));
 
-    setAvailability("");
-    setLectureCount("");
-    setDuration("");
-    setCalendar("");
-  };
+    const res_data = await response.data.json();
+    alert(res_data.message);
+  }
 
   return (
-    <div className="Teacher-availability">
-      <h3 className="headings">Teacher Availability</h3>
+    <div className="Teacher-availability" >
+      <h4 className="headings">Teacher Availability</h4>
 
-      {/* Availability Options */}
-      <label className="radio-option label">
-        <input
-          type="radio"
-          name="availability"
-          value="lectures"
-          checked={availability === "lectures"}
-          onChange={(e) => setAvailability(e.target.value)}
-        />
-        <span class="radio-custom"></span>
-        Single hour leave
-      </label>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <form onSubmit={handleTeacherAvailability}>
+          <select name="leave_type" value={leaveType} onChange={(e) => setLeaveType(e.target.value)} >
+            <option >Select Leave Type</option>
+            <option value="period">Period</option>
+            <option value="day">Entire Day</option>
+            <option value="duration">DateTime Specific</option>
+          </select>
 
-      <label className="radio-option label">
-        <input
-          type="radio"
-          name="availability"
-          value="entireday"
-          checked={availability === "entireday"}
-          onChange={(e) => setAvailability(e.target.value)}
-        />
-        <span class="radio-custom"></span>
-        Entire Day (Substitute Needed)
-      </label>
+          {
+            leaveType === "period" ? (
+              <>
+                <Select
+                  name="classes"
+                  isMulti
+                  placeholder="Select Classes"
+                  options={classes.classes
+                    .filter(c => c.code.trim() !== "")
+                    .map(c => ({
+                      value: JSON.stringify(c),
+                      label: `${c.period}: ${c.code}: ${c.name} - ${c.year} - ${c.branch} - ${c.section}`
+                    }))
+                  }
+                  onChange={(values) => setPeriods(values.map(v => JSON.parse(v.value)))}
+                />
 
-      <label className="radio-option label">
-        <input
-          type="radio"
-          name="availability"
-          value="leave"
-          checked={availability === "leave"}
-          onChange={(e) => setAvailability(e.target.value)}
-        />
-        <span class="radio-custom"></span>
-        Taking Leave (Assign Substitute)
-      </label>
+                <input name="from" type="date" min={new Date().toISOString().split("T")[0]} />
+                <input name="to" type="date" min={new Date().toISOString().split("T")[0]} />
+              </>
+            ) : leaveType === "duration" ? (
+              <>
+                <input name="from" type="date" min={new Date().toISOString().split("T")[0]} />
 
-      {/* the fuckin dropdown */}
-      {availability === "lectures" && (
-        <select className="select-box" value={lectureCount} onChange={(e) => setLectureCount(e.target.value)}>
-          <option value="">Select Number of Lectures</option>
-          <option value="1">1 Lecture</option>
-          <option value="2">2 Lectures</option>
-          <option value="3">3 Lectures</option>
-          <option value="4">4 Lectures</option>
-          <option value="5">5 Lectures</option>
-        </select>
-      )}
+                <input name="to" type="date" min={new Date().toISOString().split("T")[0]} />
+              </>
+            ) : leaveType === "day" ? (
+              <>
+                <label>Select Day</label>
+                <input name="on" type="date" />
+              </>
+            ) : (
+              ""
+            )
+          }
 
-      {/* duration dropdown for entire fuckin day */}
-      {availability === "entireday" && (
-        <select className="select-box" value={duration} onChange={(e) => setDuration(e.target.value)}>
-          <option value="">Select Duration</option>
-          <option value="1hour">1 Hour</option>
-          <option value="2hours">2 Hours</option>
-          <option value="fullday">Entire Day</option>
-        </select>
-      )}
-
-      {/* Calendar input for some lectures / entire day */}
-      {(availability === "leave" || availability === "entireday") && (
-        <div>
-          <input
-            className="select-box"
-            name="expires_at"
-            type="datetime-local"
-            value={calendar}
-            onChange={(e) => setCalendar(e.target.value)}
-          />
-        </div>
-      )}
-      <br/>
-      <button className="button" onClick={handleSubmit}>Submit</button>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
   );
 };

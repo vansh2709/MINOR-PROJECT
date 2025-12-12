@@ -15,37 +15,31 @@ const TeacherDashboard = () => {
   ];
 
   return (
-    <div className="dashboard">
+    <div className="dashboard teacher-dashboard">
 
-      {/* Header */}
-      <Header />
-      
-      <div className="dashboard-content">
-        <Sidebar 
-            name="Teacher 1001"
-            email="testing@example.com"
-            id="XXXXXXXXXXXXXX"
-            onLogout={() => console.log("Logout clicked")}
-            />
-        {/* Left Section – Timetable */}
-        <div className="timetable-section">
-          <TimeTable />
-        </div>
-        <div className="card row1 ">
-          <TeacherAvailability />
-        </div>            
-        <div className="row2">
-        <div className="card other">
-          <Announce announcements={announcements} />
-        </div>
-        <div className="card other">
-          <StudentLeaveManagement />
-        </div>
-        </div>
+      <div className="sidebar">
+        <Sidebar />
       </div>
-      <Footer />
 
+      {/* Left Section – Timetable */}
+      <div className="timetable-section">
+        <TimeTable />
+      </div>
+
+      <div className="card row1 teacher-availability">
+        <TeacherAvailability />
+      </div>
+
+      <div className="card other announcements">
+        <Announce announcements={announcements} />
+      </div>
+
+      <div className="card other leave-management">
+        <StudentLeaveManagement />
+      </div>
     </div>
+
+
   );
 };
 export default TeacherDashboard;

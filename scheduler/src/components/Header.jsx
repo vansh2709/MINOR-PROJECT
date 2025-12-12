@@ -2,10 +2,10 @@ export default function Header() {
   return (
     <header>
       <nav className="header">
-        <h1 className="Title">ScheduGrid</h1>
+        <a href="/" className="Title">ScheduGrid</a>
         <div className="header-links">
-          <a className="links" href="#">About ScheduGrid</a>
-          <a className="links" href="#">Contact Admin</a>
+          <a className="links" href="#">About</a>
+          <a className="links" href="#">Contact Us</a>
         </div>
       </nav>
     </header>

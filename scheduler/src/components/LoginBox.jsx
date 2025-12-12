@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // <-- IMPORT useNavigate
+import { AppStates } from '../services/states';
+
 function LoginPage() {
   const navigate = useNavigate();
+  const { userData, setUserData } = AppStates();
 
   // 2. Update the handleSubmit function
   const handleSubmit = async (e) => {
@@ -27,9 +30,11 @@ function LoginPage() {
     alert(data.message);
 
     const loginSuccessful = data.success;
-
     if (loginSuccessful) {
       console.log('Login successful! Redirecting to dashboard...');
+
+      // set user data
+      setUserData(data.user_creds)
 
       // 3. Use navigate to redirect to the new route
       navigate('/dashboard');

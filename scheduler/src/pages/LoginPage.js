@@ -19,11 +19,7 @@ function LoginPage() {
   };
 
   return (
-    <>
-      <Header />
       <LoginBox handleSubmit={handleSubmit} />
-      <Footer />
-    </>
   );
 }
 

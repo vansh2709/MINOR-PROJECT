@@ -41,61 +41,63 @@ export default function Announce() {
             <h3 className="headings">Announcement</h3>
             <form ref={formRef} onSubmit={handleAnnounce}>
                 <div>
-                    <div>
-                        <label className="label">Title:</label><br />
+                    <div className="">
+                        <label className="label">Title</label><br />
                         <input className="input-box" name="title" placeholder="title..." />
                     </div>
 
-                    <div>
-                        <label className="label">Body:</label><br />
+                    <div className="!mt-4">
+                        <label className="label">Body</label><br />
                         <input className="input-box" name="body" placeholder="body..." />
                     </div>
                 </div>
 
-                <p className="label">Target:</p>
-                <div>
-                    <div>
-                        {/* Replaced Selector/SelectInput with native select element for Year */}
-                        <div>
-                            <label className="label " htmlFor="target_year">Year:  </label>
-                            <select name="target_year" id="target_year" className="select-box">
-                                <option value="all" >All</option>
-                                <option value="1">1st Year</option>
-                                <option value="2" >2nd Year</option>
-                                <option value="3" >3rd Year</option>
-                                <option value="4" >4th Year</option>
-                            </select>
+                <p className="label !mt-4">Target</p>
 
-                            <label className="label" htmlFor="target_branch">Branch:  </label>
-                            <select name="target_branch" id="target_branch" className="select-box">
-                                <option value="all">All</option>
-                                <option value="CSE">CSE</option>
-                                <option value="AI">AI/ML</option>
-                                <option value="RA">Robotics</option>
-                                <option value="ME">ME</option>
-                                <option value="CE">Civil</option>
-                                <option value="BCA">BCA</option>
-                            </select>
+                <div className="flex w-full gap-3">
+                    <div className="flex flex-col w-full">
+                        <label className="label" htmlFor="target_year">Year:  </label>
+                        <select name="target_year" id="target_year" className="select-box">
+                            <option value="all" >All</option>
+                            <option value="1">1st Year</option>
+                            <option value="2" >2nd Year</option>
+                            <option value="3" >3rd Year</option>
+                            <option value="4" >4th Year</option>
+                        </select>
+                    </div>
 
-                            <label className="label" htmlFor="target_section">Section:  </label>
-                            <select name="target_section" id="target_section" className="select-box">
-                                <option value="all">All</option>
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                            </select>
-                        </div>
+                    <div className="flex flex-col w-full">
+                        <label className="label" htmlFor="target_branch">Branch:  </label>
+                        <select name="target_branch" id="target_branch" className="select-box">
+                            <option value="all">All</option>
+                            <option value="CSE">CSE</option>
+                            <option value="AI">AI/ML</option>
+                            <option value="RA">Robotics</option>
+                            <option value="ME">ME</option>
+                            <option value="CE">Civil</option>
+                            <option value="BCA">BCA</option>
+                        </select>
+                    </div>
+
+                    <div className="flex flex-col w-full">
+                        <label className="label" htmlFor="target_section">Section:  </label>
+                        <select name="target_section" id="target_section" className="select-box">
+                            <option value="all">All</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                        </select>
                     </div>
                 </div>
 
                 {/* expiry of announcement */}
-                <div>
+                <div className="w-full mt-4 flex items-center">
                     <label className="label">Expires At: </label>
-                    <input className="select-box" name="expires_at" type="datetime-local" />
+                    <input className="select-box flex-1" name="expires_at" type="datetime-local" />
                 </div>
 
                 <button
-                    className="button"
+                    className="block button rounded-md !ml-auto !mt-6"
                     type="submit"
                     disabled={loading}
                 >

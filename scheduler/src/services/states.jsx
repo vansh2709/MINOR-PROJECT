@@ -5,9 +5,8 @@ const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
 
-    const [userData, setUserData] = useState();
-    const [classes, setClasses] = useState({});
-    const [leaveHistory, setLeaveHistory] = useState([]);
+    const [userData, setUserData] = useState({});
+    const [classes, setClasses] = useState([]);
 
     const loadTimetable = async (userCreds) => {
         const days = [
@@ -16,7 +15,7 @@ export const GlobalProvider = ({ children }) => {
         ];
         const date = new Date();
         const int_day = date.getDay();
-        const day = days[int_day];
+        const day = "Tuesday" //days[int_day];
         const year = userCreds.year;
         const branch = userCreds.branch;
         const section = "A";
@@ -32,9 +31,9 @@ export const GlobalProvider = ({ children }) => {
         // pushing lunch
         const lunch = {
             period_id: 5,
-            subject_id: '        ',
+            subject_id: '',
             subject_name: 'LUNCH',
-            teacher_name: '        '
+            teacher_name: ''
         }
         data.classes.push(lunch);
 
@@ -45,13 +44,19 @@ export const GlobalProvider = ({ children }) => {
 
             if (period) {
                 const period_data = {
+                    day: period.day,
+                    period: period.period_id,
                     code: period.subject_id,
                     name: period.subject_name,
-                    teacher: period.teacher_name
+                    teacher: period.teacher_name,
+                    year: period.year,
+                    branch: period.branch_id,
+                    section: period.section,
+                    cancelled: period.cancelled
                 }
                 timetable.push(period_data);
             } else {
-                timetable.push({ code: "          ", name: "          ", teacher: "          " })
+                timetable.push({ code: "", name: "", teacher: "" })
             }
         }
 
@@ -108,15 +113,19 @@ export const GlobalProvider = ({ children }) => {
     useEffect(() => {
         const user_creds = localStorage.getItem("user_creds");
         const userCreds = user_creds ? JSON.parse(user_creds) : undefined;
-        if (userCreds?.email !== undefined) {
-            setUserData(userCreds)
-            loadTimetable(userCreds);
 
-            // subscribe to fcm
-            SubscribePushNotification(userCreds);
-            return;
+        if (userCreds?.email !== undefined) {
+            setUserData(userCreds);
         }
     }, [])
+
+    useEffect(() => {
+        // load timetable
+        loadTimetable(userData);
+        // subscribe to fcm
+        SubscribePushNotification(userData);
+        return;
+    }, [userData])
 
     // functions
     async function doFetch(url, method = "GET", headers = {}, body = null) {
@@ -136,8 +145,8 @@ export const GlobalProvider = ({ children }) => {
 
     const exports = {
         doFetch,
-        userData,
-        classes, setClasses
+        userData, setUserData,
+        classes, setClasses,
     }
 
     return (

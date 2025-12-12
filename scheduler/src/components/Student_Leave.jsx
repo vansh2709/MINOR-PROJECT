@@ -67,40 +67,43 @@ const LeaveBox = ({
 
       {/* Leave History */}
       <div className="leave-box">
-        <div className="leave-history">
-        <h3>Leave History</h3>
-        <p>
-          Leaves this month: <span>{leaveHistory.length}</span>
-        </p>
-        </div>
 
-        {/* Leave Status */}
-        <div className="leave-status">
-        <h3>Leave Status</h3>
-        <div className="leave-status">
-          {
-            leaveHistory[0]?.status === "Pending" ? (
-              <>
-                <p>
-                  <span>Date:</span> {new Date(leaveHistory[0].created_at).toLocaleString("en-IN")}
-                </p>
-                <p>
-                  <span>Sub:</span> {leaveHistory[0].subject}
-                </p>
-                <p>
-                  <span>Status:</span> {leaveHistory[0].status}
-                </p>
-              </>
-            ) : (
-              <></>
-            )
-          }
-        </div>
+        <div className="leave-history-status">
+          <div className="leave-history">
+            <h2>Leave History</h2>
+            <p>
+              Leaves this month: <span>{leaveHistory.length}</span>
+            </p>
+          </div>
+
+          {/* Leave Status */}
+          <div className="leave-status">
+            <h2>Leave Status</h2>
+            <div className="leave-status">
+              {
+                leaveHistory[0]?.status === "Pending" ? (
+                  <>
+                    <p>
+                      <span>Date:</span> {new Date(leaveHistory[0].created_at).toLocaleString("en-IN")}
+                    </p>
+                    <p>
+                      <span>Sub:</span> {leaveHistory[0].subject}
+                    </p>
+                    <p>
+                      <span>Status:</span> {leaveHistory[0].status}
+                    </p>
+                  </>
+                ) : (
+                  <></>
+                )
+              }
+            </div>
+          </div>
         </div>
 
         {/* Submit Leave */}
         <div className="submit-leave">
-          <h3>Submit Leave</h3>
+          <h2>Submit Leave</h2>
 
           <div className="row2">
             <div className="other">
@@ -114,16 +117,14 @@ const LeaveBox = ({
             </div>
           </div>
 
-          <textarea class="input-box" ref={applicationRef} name="leave_application" placeholder="Type......" required></textarea>
+          <textarea className="input-box" ref={applicationRef} name="leave_application" placeholder="Type......" rows={4} required></textarea>
 
-          <div className="submit-row">
-            <button
-              className="submit-btn"
-              onClick={submitLeave}
-            >
-              Submit
-            </button>
-          </div>
+          <button
+            className="submit-btn"
+            onClick={submitLeave}
+          >
+            Submit
+          </button>
 
         </div>
 

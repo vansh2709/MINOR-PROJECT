@@ -16,38 +16,23 @@ const StudentDashboard = () => {
 
   return (
     <div className="dashboard">
-
-      {/* Header */}
-      <Header />
-
-      <div className="dashboard-content">
-        <Sidebar 
-            name="Student 1001"
-            email="testing@example.com"
-            id="2216201010XX"
-            onLogout={() => console.log("Logout clicked")}
-            />
-        {/* Left Section – Timetable */}
-        <div className="timetable-section">
-          <TimeTable />
-        </div>
-
-        <div className="row2">
-        <div className="card other">
-            <LeaveBox/>
-        </div>
-
-        {/* Right Section – Announcements */}
-        <div className="card other">
-          <Announcements announcements={announcements} />
-        </div>
-        </div>
-
+      <div className="sidebar">
+        <Sidebar />
       </div>
-      <Footer />
 
+      {/* Left Section – Timetable */}
+      <div className="timetable-section">
+        <TimeTable />
+      </div>
+
+      <div className="leave-management card other">
+        <LeaveBox />
+      </div>
+
+      <div className="announcements card other">
+        <Announcements announcements={announcements} />
+      </div>
     </div>
-    
   );
 };
 
