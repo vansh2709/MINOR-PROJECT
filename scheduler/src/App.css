@@ -171,13 +171,13 @@ body {
     gap: 1.2rem;
 }
 
-.teacher-dashboard{
+.teacher-dashboard {
     display: grid;
     width: 100%;
     grid-template-areas:
         "sidebar timetable timetable timetable"
-        "sidebar leave teacher_leave announcements"
-        "sidebar leave teacher_leave announcements"
+        "sidebar leave leave announcements"
+        "sidebar teacher_leave teacher_leave announcements"
     ;
 
     grid-template-columns: minmax(0, 350px) 1fr 1fr 1fr;
@@ -189,8 +189,6 @@ body {
     width: 100%;
     height: 100%;
     box-shadow: 2px 2px 8px 2px #3a3a3a36;
-    z-index: 90;
-
     border-radius: 12px;
 }
 
@@ -198,12 +196,18 @@ body {
     grid-area: timetable;
 }
 
-.teacher-availability{
+.teacher-availability {
     grid-area: teacher_leave;
 }
 
 .leave-management {
     grid-area: leave;
+}
+
+.leave-verifier {
+    min-height: 280px;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .announcements {
@@ -297,7 +301,7 @@ body {
     width: 100%;
 }
 
-.announcer h3{
+.announcer h3 {
     margin: 0;
     padding: 0;
 }
@@ -359,7 +363,6 @@ body {
     border-radius: 5px;
     padding: 5px;
     width: 100%;
-    text-align: center;
 }
 
 .Student-leave-management {
@@ -369,6 +372,13 @@ body {
     align-content: center;
     text-align: center;
 
+}
+
+/* student leave history + approval ( teacher dashboard ) */
+.leave-container .leaves {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1rem;
 }
 
 .schedule-container {
@@ -381,7 +391,7 @@ body {
     border-radius: 10px;
     /* margin-top: 1.6rem; */
     /* margin-right: 1.6rem; */
-    padding: 1.2rem;
+    padding: 1rem;
 }
 
 .schedule-table {
@@ -389,7 +399,6 @@ body {
     border-collapse: separate;
     border-spacing: 6px;
     width: 100%;
-    margin-top: 10px;
     padding: 10px;
 }
 
@@ -466,7 +475,7 @@ body {
     padding-top: 5px;
 }
 
-.cancelled-class{
+.cancelled-class {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -476,11 +485,11 @@ body {
     width: 100%;
     height: 100%;
     background-color: #64646454;
-    border-radius: 12px; 
+    border-radius: 12px;
     backdrop-filter: blur(1px);
 }
 
-.cancelled-class p{
+.cancelled-class p {
     font-size: 1.4rem;
     font-weight: bold;
     color: #ff0000;

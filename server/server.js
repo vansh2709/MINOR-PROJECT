@@ -163,13 +163,14 @@ app.get("/get-timetable", async (req, res) => {
 
     try {
       const response1 = await pool.query(cancel_cancelled_class_query);
-      console.log("here", response1);
+      if(response1.affectedRows > 0){
+        console.log("removing expired leaves classes", response1);
+      }
     } catch (error) {
       throw error;
     }
 
-    if (teacher_id) {
-
+    if (teacher_id && teacher_id !== "undefined") {
       if (day === "" || day === undefined) {
         const query = `select day, period_id, subject_id, subject_name, teacher_name, cancelled from schedule where teacher_id = ? order by period_id`;
         const [rows] = await pool.query(query, [
@@ -239,11 +240,16 @@ app.get("/get-timetable", async (req, res) => {
 
         res.json({
           success: true,
+          message: "thrown classes",
           data: { day: day, classes: classes }
         })
       }
     }
   } catch (err) {
+    res.json({
+      success: false,
+      message: "Internal server error"
+    })
     console.log(err);
   }
 })
@@ -297,14 +303,29 @@ app.post("/upload-leave", async (req, res) => {
       applicable_from, 
       applicable_to, 
       status
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    values = [applicant?.name, applicant?.year, applicant?.branch, applicant?.student_id, subject, application, applicable_from, applicable_to, "Pending"];
+    ) select ?, ?, ?, ?, ?, ?, ?, ?, 'Pending'
+     where not exists (
+      select 1 
+      from leaves
+      where student_id = ?
+        and status = 'Pending'
+     )`;
+    values = [applicant?.name, applicant?.year, applicant?.branch, applicant?.student_id, subject, application, applicable_from, applicable_to, applicant?.student_id];
   }
 
   try {
-    const response = await pool.query(query, values);
-    console.log(response)
-    res.json({ success: true, message: "Leave submitted successfully" });
+    const [response] = await pool.query(query, values);
+    if (response.affectedRows === 0) {
+      res.json({
+        success: false,
+        message: "You already have a pending leave request"
+      });
+    } else{
+      res.json({
+        success: true,
+        message: "Leave submitted successfully"
+      })
+    }
   } catch (err) {
     if (err.code === "ER_DUP_ENTRY") {
       res.json({ success: false, message: "Duplicate application found" })
@@ -407,7 +428,7 @@ app.post("/teacher-availability", async (req, res) => {
     query2 = `update schedule set cancelled = ?, cancelled_from = ?, cancelled_to = ? where teacher_id = ? and day in (${Array.from(affected_days).map(ad => "?").join(",")})`;
 
     values2 = [1, from || on, to || on, applicant.teacher_id, ...affected_days];
-  }
+  } 
 
   try {
     // const response1 = await pool.query(query1, values1);

@@ -34,7 +34,7 @@ const TeacherDashboard = () => {
         <Announce announcements={announcements} />
       </div>
 
-      <div className="card other leave-management">
+      <div className="card other leave-management leave-verifier">
         <StudentLeaveManagement />
       </div>
     </div>

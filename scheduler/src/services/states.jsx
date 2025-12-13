@@ -19,15 +19,18 @@ export const GlobalProvider = ({ children }) => {
         const year = userCreds.year;
         const branch = userCreds.branch;
         const section = "A";
-
         const role = userCreds.role;
+
         let url = "";
         if (role === "Student") url = `http://localhost:8000/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`;
         else url = `http://localhost:8000/get-timetable?teacher_name=${encodeURIComponent(userCreds.name)}&teacher_id=${userCreds.teacher_id}&day=${day}`;
 
+        console.log(url)
+
         const response = await fetch(url);
         let data = await response.json();
         data = data.data;
+
         // pushing lunch
         const lunch = {
             period_id: 5,
@@ -59,7 +62,6 @@ export const GlobalProvider = ({ children }) => {
                 timetable.push({ code: "", name: "", teacher: "" })
             }
         }
-
         setClasses({ day: day, classes: timetable });
     }
 
@@ -120,6 +122,7 @@ export const GlobalProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
+        if(!userData.email) return;
         // load timetable
         loadTimetable(userData);
         // subscribe to fcm
