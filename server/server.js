@@ -4,8 +4,10 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const admin = require("./firebaseAdmin");
 const cron = require("node-cron");
+const path = require("path");
 
 const app = express();
+app.use(express.static(path.join(__dirname, "build")));
 app.use(express.json());
 app.use(cors());
 
