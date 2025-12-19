@@ -15,7 +15,7 @@ function LoginPage() {
     const formData = Object.fromEntries(form.entries());
 
     // authenticate user login
-    const response = await fetch("http://localhost:8000/login", {
+    const response = await fetch("/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -52,7 +52,7 @@ function LoginPage() {
 
     // validate email id
     if (field.name === "email") {
-      const response = await fetch("http://localhost:8000/validate-creds", {
+      const response = await fetch("/validate-creds", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

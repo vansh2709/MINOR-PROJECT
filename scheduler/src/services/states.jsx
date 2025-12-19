@@ -40,7 +40,7 @@ export const GlobalProvider = ({ children }) => {
         ];
         const date = new Date();
         const int_day = date.getDay();
-        const day = "Tuesday" //days[int_day];
+        const day = days[int_day];
         const year = userCreds?.year;
         const branch = userCreds?.branch;
         const section = "A";

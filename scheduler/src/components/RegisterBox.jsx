@@ -24,7 +24,7 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8000/register", {
+    const response = await fetch("/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -98,7 +98,7 @@ function RegisterPage() {
 
     // validate email and techer/student id
     if (name === "email" || name === "student_id" || name === "teacher_id") {
-      const response = await fetch("http://localhost:8000/validate-creds", {
+      const response = await fetch("/validate-creds", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
