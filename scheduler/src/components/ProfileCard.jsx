@@ -33,6 +33,23 @@ const Sidebar = ({ name, email, id, onLogout }) => {
           <div className="info-item">
             <span>Name</span><span>: {userData?.name}</span>
           </div>
+          {
+            userData?.role === "Student" && (
+              <>
+                <div className="info-item">
+                  <span>Year</span><span>: {userData?.year}</span>
+                </div>
+
+                <div className="info-item">
+                  <span>Branch</span><span>: {userData?.branch}</span>
+                </div>
+
+                <div className="info-item">
+                  <span>Section</span><span>: {userData?.section}</span>
+                </div>
+              </>
+            )
+          }
           <div className="info-item">
             <span>Email</span><span>: {userData?.email}</span>
           </div>

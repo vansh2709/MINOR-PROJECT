@@ -6,6 +6,7 @@ import Sidebar from "../components/ProfileCard";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Announce from "../components/Announce";
+import RequestNotification from "../components/RequestNotification";
 
 const TeacherDashboard = () => {
   const announcements = [
@@ -15,31 +16,31 @@ const TeacherDashboard = () => {
   ];
 
   return (
-    <div className="dashboard teacher-dashboard">
+    <>
+      <RequestNotification />
+      <div className="dashboard teacher-dashboard">
+        <div className="sidebar">
+          <Sidebar />
+        </div>
 
-      <div className="sidebar">
-        <Sidebar />
+        {/* Left Section – Timetable */}
+        <div className="timetable-section">
+          <TimeTable />
+        </div>
+
+        <div className="card row1 teacher-availability">
+          <TeacherAvailability />
+        </div>
+
+        <div className="card other announcements">
+          <Announce announcements={announcements} />
+        </div>
+
+        <div className="card other leave-management leave-verifier">
+          <StudentLeaveManagement />
+        </div>
       </div>
-
-      {/* Left Section – Timetable */}
-      <div className="timetable-section">
-        <TimeTable />
-      </div>
-
-      <div className="card row1 teacher-availability">
-        <TeacherAvailability />
-      </div>
-
-      <div className="card other announcements">
-        <Announce announcements={announcements} />
-      </div>
-
-      <div className="card other leave-management leave-verifier">
-        <StudentLeaveManagement />
-      </div>
-    </div>
-
-
+    </>
   );
 };
 export default TeacherDashboard;

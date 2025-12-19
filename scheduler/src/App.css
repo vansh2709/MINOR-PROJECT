@@ -207,7 +207,6 @@ body {
 .leave-verifier {
     min-height: 280px;
     max-height: 300px;
-    overflow-y: auto;
 }
 
 .announcements {

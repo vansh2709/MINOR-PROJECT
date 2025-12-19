@@ -1,12 +1,37 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { requestFCMToken } from "./requestToken";
+import { messaging } from "./firebase";
+import { onMessage } from "firebase/messaging";
 
 const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
 
-    const [userData, setUserData] = useState({});
+    const [userData, setUserData] = useState();
     const [classes, setClasses] = useState([]);
+    const [leaveHistory, setLeaveHistory] = useState([]);
+    const [announcements, setAnnouncements] = useState([]);
+
+    // highlight current period
+    function runAtWholeHour(fn) {
+        const now = new Date();
+
+        const msToNextHour =
+            (60 - now.getMinutes()) * 60 * 1000 -
+            now.getSeconds() * 1000 -
+            now.getMilliseconds();
+
+        setTimeout(() => {
+            fn(); // runs exactly at HH:00
+
+            setInterval(fn, 60 * 60 * 1000); // every whole hour
+        }, msToNextHour);
+    }
+
+    runAtWholeHour(() => {
+        loadTimetable(userData);
+    });
+      
 
     const loadTimetable = async (userCreds) => {
         const days = [
@@ -16,16 +41,14 @@ export const GlobalProvider = ({ children }) => {
         const date = new Date();
         const int_day = date.getDay();
         const day = "Tuesday" //days[int_day];
-        const year = userCreds.year;
-        const branch = userCreds.branch;
+        const year = userCreds?.year;
+        const branch = userCreds?.branch;
         const section = "A";
-        const role = userCreds.role;
+        const role = userCreds?.role;
 
         let url = "";
         if (role === "Student") url = `http://localhost:8000/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`;
-        else url = `http://localhost:8000/get-timetable?teacher_name=${encodeURIComponent(userCreds.name)}&teacher_id=${userCreds.teacher_id}&day=${day}`;
-
-        console.log(url)
+        else url = `http://localhost:8000/get-timetable?teacher_name=${encodeURIComponent(userCreds?.name)}&teacher_id=${userCreds?.teacher_id}&day=${day}`;
 
         const response = await fetch(url);
         let data = await response.json();
@@ -34,9 +57,9 @@ export const GlobalProvider = ({ children }) => {
         // pushing lunch
         const lunch = {
             period_id: 5,
-            subject_id: '',
+            subject_id: ' ',
             subject_name: 'LUNCH',
-            teacher_name: ''
+            teacher_name: ' '
         }
         data.classes.push(lunch);
 
@@ -47,19 +70,23 @@ export const GlobalProvider = ({ children }) => {
 
             if (period) {
                 const period_data = {
+                    id: period.id, 
                     day: period.day,
-                    period: period.period_id,
-                    code: period.subject_id,
-                    name: period.subject_name,
-                    teacher: period.teacher_name,
+                    period_id: period.period_id,
+                    subject_id: period.subject_id,
+                    subject_name: period.subject_name,
+                    teacher_name: period.teacher_name,
                     year: period.year,
-                    branch: period.branch_id,
+                    branch_id: period.branch_id,
+                    branch_name: period.branch_name,
                     section: period.section,
-                    cancelled: period.cancelled
+                    room_number: period.room_number,
+                    cancelled: period.cancelled,
+                    isCurrentPeriod: p === new Date().getHours() - 8 ? true : false
                 }
                 timetable.push(period_data);
             } else {
-                timetable.push({ code: "", name: "", teacher: "" })
+                timetable.push({ code: "", name: "", teacher: "" , isCurrentPeriod: p === new Date().getHours() - 8 ? true : false})
             }
         }
         setClasses({ day: day, classes: timetable });
@@ -74,13 +101,13 @@ export const GlobalProvider = ({ children }) => {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
                         console.log("Notification permission granted!");
-                        resolve();
+                        resolve(true);
                     } else if (permission === "denied") {
                         console.log("Permission denied.");
-                        resolve();
+                        resolve(false);
                     } else {
                         console.log("Permission dismissed.");
-                        reject();
+                        reject(true);
                     }
                 });
             }
@@ -88,47 +115,48 @@ export const GlobalProvider = ({ children }) => {
     }
 
     async function SubscribePushNotification(userCreds) {
-        await requestNotification();
+        const granted = await requestNotification();
+        if (!granted) return false;
 
-        requestFCMToken().then(async token => {
-            if (token) {
-                const response = await fetch("http://localhost:8000/save-fcm-token", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email: userCreds.email,
-                        token: token,
-                        topics: userCreds?.role === "Student" ? [
+        try {
+            const token = await requestFCMToken();
+            if (!token) return false;
+
+            const response = await fetch("http://localhost:8000/save-fcm-token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: userCreds?.email,
+                    token,
+                    topics: userCreds?.role === "Student"
+                        ? [
                             `year_${userCreds?.year}`,
                             `branch_${userCreds?.branch}`,
                             `${userCreds?.branch}_${userCreds?.year}_${userCreds?.section}`
-                        ] : ["teachers"]
-                    })
+                        ]
+                        : ["teachers"]
                 })
-                const res_data = await response.json();
-            }
-        });
+            });
+
+            const res_data = await response.json();
+            return !!res_data.success;
+
+        } catch (err) {
+            console.error("Push subscription failed:", err);
+            return false;
+        }
     }
 
-    useEffect(() => {
-        const user_creds = localStorage.getItem("user_creds");
-        const userCreds = user_creds ? JSON.parse(user_creds) : undefined;
+    async function loadLeaves() {
+        if (!userData?.email) return;
+        const url = `http://localhost:8000/fetch-leaves?user_data=${encodeURIComponent(JSON.stringify(userData))}`;
+        const response = await doFetch(url, "GET");
+        const leaves = await response.data.json();
 
-        if (userCreds?.email !== undefined) {
-            setUserData(userCreds);
-        }
-    }, [])
-
-    useEffect(() => {
-        if(!userData.email) return;
-        // load timetable
-        loadTimetable(userData);
-        // subscribe to fcm
-        SubscribePushNotification(userData);
-        return;
-    }, [userData])
+        setLeaveHistory(leaves.data);
+    }
 
     // functions
     async function doFetch(url, method = "GET", headers = {}, body = null) {
@@ -145,11 +173,63 @@ export const GlobalProvider = ({ children }) => {
         }
     }
 
+    async function loadAnnouncements() {
+        console.log(`http://localhost:8000/announcements?year=${userData?.year}&branch=${userData?.branch}&section=${userData?.section}`)
+
+        const response = await doFetch(`http://localhost:8000/announcements?year=${userData?.year}&branch=${userData?.branch}&section=${userData?.section}`, "GET");
+
+        const res_data = await response.data.json();
+        const announcements = res_data.data;
+        if (announcements.length > 0) {
+            setAnnouncements(announcements);
+        }
+    }
+
+
+    // listen for incoming notification
+    onMessage(messaging, (payload) => {
+        console.log("Foreground push received", payload);
+        if (!userData?.email) return;
+        // load timetable
+        loadTimetable(userData);
+        loadLeaves(userData?.role)
+
+        // load announcement
+        if (userData?.role === "Teacher") return;
+        loadAnnouncements();
+    });
+
+
+    useEffect(() => {
+        const user_creds = localStorage.getItem("user_creds");
+        const userCreds = user_creds ? JSON.parse(user_creds) : undefined;
+
+        if (userCreds?.email !== undefined) {
+            setUserData(userCreds);
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!userData?.email) return;
+        loadTimetable(userData);
+        if (Notification.permission === "granted") SubscribePushNotification(userData);
+
+        // load announcement
+        if (userData?.role === "Teacher") return;
+        loadAnnouncements();
+    }, [userData])
+
 
     const exports = {
         doFetch,
         userData, setUserData,
         classes, setClasses,
+        loadTimetable,
+        loadLeaves,
+        announcements,
+        leaveHistory, setLeaveHistory,
+        requestNotification,
+        SubscribePushNotification
     }
 
     return (

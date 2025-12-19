@@ -12,22 +12,13 @@ const LeaveBox = ({
   const applicationRef = useRef(HTMLTextAreaElement);
   const applicable_from_ref = useRef(HTMLInputElement);
   const applicable_to_ref = useRef(HTMLInputElement);
-  const [leaveHistory, setLeaveHistory] = useState([]);
 
-  const { userData, doFetch } = AppStates();
-
-  async function loadLeaves() {
-    if (!userData) return;
-    const url = `http://localhost:8000/fetch-leaves?user_data=${encodeURIComponent(JSON.stringify(userData))}`;
-    const response = await doFetch(url, "GET");
-    const leaves = await response.data.json();
-    console.log(leaves.data[0])
-    setLeaveHistory(leaves.data);
-  }
+  const { userData, doFetch, leaveHistory, loadLeaves } = AppStates();
 
   useEffect(() => {
     // fetch leave
-    loadLeaves();
+    if (!userData?.email) return;
+    loadLeaves(userData?.role);
   }, [userData])
 
   async function submitLeave() {
@@ -77,26 +68,20 @@ const LeaveBox = ({
           </div>
 
           {/* Leave Status */}
-          <div className="leave-status">
+          <div className="leave-status flex flex-col items-end">
             <h2>Leave Status</h2>
-            <div className="leave-status">
-              {
-                leaveHistory[0]?.status === "Pending" ? (
-                  <>
-                    <p>
-                      <span>Date:</span> {new Date(leaveHistory[0].created_at).toLocaleString("en-IN")}
-                    </p>
-                    <p>
-                      <span>Sub:</span> {leaveHistory[0].subject}
-                    </p>
-                    <p>
-                      <span>Status:</span> {leaveHistory[0].status}
-                    </p>
-                  </>
-                ) : (
-                  <></>
-                )
-              }
+            <div className="leave-status flex flex-col items-end">
+              <p>
+                <span>Sub:</span> {leaveHistory[0]?.subject}
+              </p>
+              <p>
+                <span>From:</span> {new Date(leaveHistory[0]?.applicable_from).toLocaleDateString("en-IN")}
+                &nbsp;
+                <span>To:</span> {new Date(leaveHistory[0]?.applicable_to).toLocaleDateString("en-IN")}
+              </p>
+              <p>
+                <span>Status:</span> {leaveHistory[0]?.status}
+              </p>
             </div>
           </div>
         </div>

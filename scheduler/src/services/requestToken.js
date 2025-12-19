@@ -1,4 +1,4 @@
-import { messaging } from "../firebase";
+import { messaging } from "./firebase";
 import { getToken } from "firebase/messaging";
 
 export async function requestFCMToken() {

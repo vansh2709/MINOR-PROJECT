@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { AppStates } from "../services/states";
+import Select from "react-select";
 
 
 export default function Announce() {
@@ -8,6 +9,9 @@ export default function Announce() {
     const formRef = useRef(HTMLFormElement);
     const [loading, setLoading] = useState(false);
     const { userData } = AppStates();
+    const [targetYears, setTargetYears] = useState([]);
+    const [targetBranches, setTargetBranches] = useState([]);
+    const [targetSections, setTargetSections] = useState([]);
 
     async function handleAnnounce(e) {
         e.preventDefault();
@@ -18,7 +22,11 @@ export default function Announce() {
             name: userData?.name,
             id: userData?.teacher_id
         };
-        formData.status = "published";
+        // add target
+        formData.target_year = targetYears;
+        formData.target_branch = targetBranches;
+        formData.target_section = targetSections;
+        formData.status = "Active";
 
         setLoading(true);
         // upload to server 
@@ -54,40 +62,69 @@ export default function Announce() {
 
                 <p className="label !mt-4">Target</p>
 
-                <div className="flex w-full gap-3">
-                    <div className="flex flex-col w-full">
-                        <label className="label" htmlFor="target_year">Year:  </label>
-                        <select name="target_year" id="target_year" className="select-box">
-                            <option value="all" >All</option>
-                            <option value="1">1st Year</option>
-                            <option value="2" >2nd Year</option>
-                            <option value="3" >3rd Year</option>
-                            <option value="4" >4th Year</option>
-                        </select>
-                    </div>
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 gap-y-3">
+                    <Select
+                        className="w-full"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        placeholder="Year(s)"
+                        options={[
+                            { value: "all", label: "All" },
+                            { value: "1", label: "1st Year" },
+                            { value: "2", label: "2nd Year" },
+                            { value: "3", label: "3rd Year" },
+                            { value: "4", label: "4th Year" }
+                        ]}
 
-                    <div className="flex flex-col w-full">
-                        <label className="label" htmlFor="target_branch">Branch:  </label>
-                        <select name="target_branch" id="target_branch" className="select-box">
-                            <option value="all">All</option>
-                            <option value="CSE">CSE</option>
-                            <option value="AI">AI/ML</option>
-                            <option value="RA">Robotics</option>
-                            <option value="ME">ME</option>
-                            <option value="CE">Civil</option>
-                            <option value="BCA">BCA</option>
-                        </select>
-                    </div>
+                        value={targetYears.map(y => ({
+                            value: y,
+                            label:
+                                y === "1" ? "1st Year" :
+                                    y === "2" ? "2nd Year" :
+                                        y === "3" ? "3rd Year" :
+                                            "4th Year"
+                        }))}
 
-                    <div className="flex flex-col w-full">
-                        <label className="label" htmlFor="target_section">Section:  </label>
-                        <select name="target_section" id="target_section" className="select-box">
-                            <option value="all">All</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                        </select>
-                    </div>
+                        onChange={(options) =>
+                            setTargetYears(options ? options.map(o => o.value) : [])
+                        }
+                    />
+
+                    <Select
+                        className="w-full"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        placeholder="Select Branch(es)"
+                        options={[
+                            { value: "all", label: "All" },
+                            { value: "CSE", label: "CSE" },
+                            { value: "AI", label: "AI / ML" },
+                            { value: "RA", label: "Robotics" },
+                            { value: "ME", label: "ME" },
+                            { value: "CE", label: "Civil" },
+                            { value: "BCA", label: "BCA" }
+                        ]}
+                        onChange={(options) =>
+                            setTargetBranches((options ?? []).map(o => o.value))
+                        }
+                    />
+
+                    <Select
+                        className="w-full"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        placeholder="Select Section(s)"
+                        options={[
+                            { value: "all", label: "All" },
+                            { value: "A", label: "A" },
+                            { value: "B", label: "B" },
+                            { value: "C", label: "C" }
+                        ]}
+                        onChange={(options) =>
+                            setTargetSections((options ?? []).map(o => o.value))
+                        }
+                    />
+
                 </div>
 
                 {/* expiry of announcement */}

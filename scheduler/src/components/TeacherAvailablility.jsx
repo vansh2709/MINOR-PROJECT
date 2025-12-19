@@ -4,13 +4,9 @@ import { AppStates } from "../services/states";
 
 const TeacherAvailability1 = ({ onSubmit }) => {
 
-  const { userData, classes, doFetch } = AppStates();
+  const { userData, classes, doFetch, loadTimetable } = AppStates();
   const [leaveType, setLeaveType] = useState("");
   const [periods, setPeriods] = useState([]);
-
-  useEffect(() => {
-    console.log(periods, leaveType)
-  }, [periods, leaveType])
 
   const handleTeacherAvailability = async (e) => {
     e.preventDefault();
@@ -24,6 +20,7 @@ const TeacherAvailability1 = ({ onSubmit }) => {
     const response = await doFetch("http://localhost:8000/teacher-availability", "POST", { "Content-Type": "application/json" }, JSON.stringify(formData));
 
     const res_data = await response.data.json();
+    loadTimetable();
     alert(res_data.message);
   }
 

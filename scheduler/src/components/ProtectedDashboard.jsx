@@ -12,11 +12,11 @@ export default function ProtectedDashboard() {
   }
 
   // Role-based switching
-  if (userCreds.role === "Teacher") {
+  if (userCreds?.role === "Teacher") {
     return <TeacherDashboard />;
   }
 
-  if (userCreds.role === "Student") {
+  if (userCreds?.role === "Student") {
     return <StudentDashboard />;
   }
 

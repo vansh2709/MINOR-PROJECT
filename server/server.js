@@ -24,6 +24,7 @@ app.post("/save-fcm-token", async (req, res) => {
 
   // subscribe to topics
   topics.forEach(async (topic) => {
+    // console.log(topic)
     await admin.messaging().subscribeToTopic(token, topic);
   })
 
@@ -41,7 +42,6 @@ app.post("/save-fcm-token", async (req, res) => {
 app.post("/validate-creds", async (req, res) => {
   try {
     const data = req.body; // e.g., { username: "john" }
-    console.log(data)
 
     if (!data || Object.keys(data).length === 0) {
       return res.status(400).json({ success: false, message: "no fields provided" });
@@ -71,8 +71,6 @@ app.post("/validate-creds", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
-  console.log(email, password)
 
   // basic validation
   if (!email || !password) {
@@ -122,7 +120,6 @@ app.post("/register", async (req, res) => {
     // convert password to password hash
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
-    console.log(password)
 
     req.body.password = password_hash;
 
@@ -163,7 +160,7 @@ app.get("/get-timetable", async (req, res) => {
 
     try {
       const response1 = await pool.query(cancel_cancelled_class_query);
-      if(response1.affectedRows > 0){
+      if (response1.affectedRows > 0) {
         console.log("removing expired leaves classes", response1);
       }
     } catch (error) {
@@ -172,7 +169,7 @@ app.get("/get-timetable", async (req, res) => {
 
     if (teacher_id && teacher_id !== "undefined") {
       if (day === "" || day === undefined) {
-        const query = `select day, period_id, subject_id, subject_name, teacher_name, cancelled from schedule where teacher_id = ? order by period_id`;
+        const query = `select id, day, period_id, subject_id, subject_name, teacher_name, cancelled from schedule where teacher_id = ? order by period_id`;
         const [rows] = await pool.query(query, [
           year, branch, section,
         ]);
@@ -195,7 +192,7 @@ app.get("/get-timetable", async (req, res) => {
           data: timetable
         });
       } else {
-        const query = `select day, period_id, subject_id, subject_name, teacher_name, year, branch_id, section, cancelled from schedule where teacher_id = ? and day = ? order by period_id`;
+        const query = `select id, day, period_id, subject_id, subject_name, teacher_name, year, branch_id, branch_name, section, room_number, cancelled from schedule where teacher_id = ? and day = ? order by period_id`;
         const [classes] = await pool.query(query, [teacher_id, day
         ]);
 
@@ -254,6 +251,35 @@ app.get("/get-timetable", async (req, res) => {
   }
 })
 
+// add / update schedule
+app.post("/update-schedule", async (req, res)=>{
+  const { action, subject_data } = req.body;
+
+  let query = "";
+  const values = Object.values(subject_data?.changes);
+
+  if(action === "Update") {
+    query = `update schedule set ${Object.keys(subject_data?.changes).map(key => `${key} = ? where id = ?`).join(", ")}`;
+    values.push(subject_data.id);
+  } else {
+    query = `insert into schedule (${Object.keys(subject_data?.changes).map(key => `${key}`).join(", ")}) values (${Object.keys(subject_data?.changes).map(key => "?").join(", ")})`;
+  }
+
+  try {
+    const [result] = await pool.query(query, values);
+    console.log(result)
+    if(result.affectedRows > 0){
+      res.json({success: true});
+    }else{
+      res.json({success: false});
+    }
+  } catch (error) {
+    console.log(error)
+    res.json({success: false, message: "Internal server error"});
+  }
+})
+
+
 // fetch leave
 app.get("/fetch-leaves", async (req, res) => {
   const { user_data } = req.query;
@@ -261,20 +287,38 @@ app.get("/fetch-leaves", async (req, res) => {
 
   let query = "";
   let values = [];
-  if (userData.role === "Student") {
+  if (userData?.role === "Student") {
     query = "select name, year, branch, student_id, subject, application, applicable_from, applicable_to, status, created_at from leaves where student_id = ? and month(created_at) = month(current_date()) and year(created_at) = year(current_date()) order by created_at desc";
-    values = [userData.student_id]
+    values = [userData?.student_id]
+
   } else {
-    query = `SELECT DISTINCT l.name, l.year, l.branch, l.student_id, l.subject, l.application, l.applicable_from, applicable_to, 
-        l.status, l.created_at
-      FROM leaves l
-      JOIN schedule s 
-        ON l.year = s.year 
-        AND l.branch = s.branch_id
-        AND l.section = s.section
-      WHERE s.teacher_id = ?;
+    query = `SELECT
+      l.name,
+      l.year,
+      l.branch,
+      l.student_id,
+      l.subject,
+      l.application,
+      l.applicable_from,
+      l.applicable_to,
+      l.status,
+      l.created_at,
+      COUNT(*) OVER (PARTITION BY l.student_id) AS total_leaves
+    FROM leaves l
+    WHERE
+      l.applicable_to > CURRENT_DATE
+      AND EXISTS (
+        SELECT 1
+        FROM schedule s
+        WHERE s.teacher_id = ?
+          AND s.year = l.year
+          AND s.branch_id = l.branch
+          AND s.section = l.section
+          AND FIND_IN_SET(s.day, l.affected_days)
+      )
+    ORDER BY l.created_at DESC;
     `;
-    values = [userData.teacher_id]
+    values = [userData?.teacher_id]
   }
 
   try {
@@ -290,6 +334,10 @@ app.get("/fetch-leaves", async (req, res) => {
 app.post("/upload-leave", async (req, res) => {
   const { applicant, subject, application, applicable_from, applicable_to } = req.body;
 
+  const affected_days = getAffectedDays(applicable_from, applicable_to);
+
+  // console.log(affected_days)
+
   let query = "";
   let values = [];
   if (applicant.role === "Student") {
@@ -302,15 +350,16 @@ app.post("/upload-leave", async (req, res) => {
       application, 
       applicable_from, 
       applicable_to, 
-      status
-    ) select ?, ?, ?, ?, ?, ?, ?, ?, 'Pending'
+      status,
+      affected_days
+    ) select ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?
      where not exists (
       select 1 
       from leaves
       where student_id = ?
         and status = 'Pending'
      )`;
-    values = [applicant?.name, applicant?.year, applicant?.branch, applicant?.student_id, subject, application, applicable_from, applicable_to, applicant?.student_id];
+    values = [applicant?.name, applicant?.year, applicant?.branch, applicant?.student_id, subject, application, applicable_from, applicable_to, affected_days, applicant?.student_id];
   }
 
   try {
@@ -320,7 +369,7 @@ app.post("/upload-leave", async (req, res) => {
         success: false,
         message: "You already have a pending leave request"
       });
-    } else{
+    } else {
       res.json({
         success: true,
         message: "Leave submitted successfully"
@@ -342,10 +391,11 @@ app.get("/verify-leave", async (req, res) => {
   const {
     "x-action": action,
     "x-applicant": applicant,
-    "x-verifier": verifier,
+    "x-verifier": verifierr,
   } = req.headers;
 
-  console.log(action, applicant, verifier)
+  const verifier = JSON.parse(verifierr);
+
   const query = `update leaves l set l.status = ? where l.student_id = ? 
   and exists (
     select 1
@@ -355,9 +405,21 @@ app.get("/verify-leave", async (req, res) => {
   )`
 
   try {
-    const response = await pool.query(query, [action, applicant, verifier])
-    res.json({ success: true, message: "successfully " + action });
+    const [response] = await pool.query(query, [action, applicant, verifier.teacher_id])
+
+    if (response.affectedRows > 0) {
+      res.json({ success: true, message: "successfully " + action });
+
+      // notify user
+      // fetch user fcm token
+      const [tokens] = await pool.query("select fcm_token from users where student_id = ?", [applicant]);
+      const token = tokens.length > 0 ? tokens[0].fcm_token : null;
+
+      await notify(token, "Leave Verification", `Leave ${action} by ${verifier.role} - ${verifier.teacher_name}`);
+    }
+
   } catch (error) {
+    console.log(error)
     res.json({ success: false, message: "error occuered" });
   }
 })
@@ -423,23 +485,22 @@ app.post("/teacher-availability", async (req, res) => {
       affected_days.add(days[index])
     }
 
-    console.log(affected_days)
+    // console.log(affected_days)
 
     query2 = `update schedule set cancelled = ?, cancelled_from = ?, cancelled_to = ? where teacher_id = ? and day in (${Array.from(affected_days).map(ad => "?").join(",")})`;
 
     values2 = [1, from || on, to || on, applicant.teacher_id, ...affected_days];
-  } 
+  }
 
   try {
     // const response1 = await pool.query(query1, values1);
     // console.log(response1);
     const response2 = await pool.query(query2, values2);
-    console.log(response2);
 
     // send notification to affected class
     // fetch affetected class
     let [classes] = await pool.query("select distinct * from schedule where day = ? and cancelled = 1 and teacher_id = ? and cancelled_from = ? and cancelled_to = ? order by year, period_id", ["Tuesday", applicant.teacher_id, from || on, to || on]);
-    
+
     const notification = {};
     classes.forEach((clas) => {
       if (!notification[`${clas.branch_id}_${clas.year}_${clas.section}`]) {
@@ -473,18 +534,54 @@ app.post("/teacher-availability", async (req, res) => {
 })
 
 
+// fetch announcemetns
+app.get("/announcements", async (req, res) => {
+  const { year, branch, section } = req.query;
+
+  const query = `SELECT 
+    title,
+    body,
+    created_by,
+    status,
+    created_at,
+    delete_at
+  FROM announcements
+  WHERE status = 'Active'
+    AND JSON_CONTAINS(target_year, JSON_ARRAY(?), '$.years')
+    AND JSON_CONTAINS(target_branch, JSON_ARRAY(?), '$.branches')
+    AND JSON_CONTAINS(target_section, JSON_ARRAY(?), '$.sections') 
+    ORDER BY id DESC;
+  `;
+  const values = [year, branch, section];
+
+  try {
+    // set status expired
+    await pool.query("update announcements set status = 'Expired' where current_timestamp > delete_at");
+
+    const [announcements] = await pool.query(query, values);
+    if (announcements.length > 0) {
+      res.json({ success: true, data: announcements });
+    }else{
+      res.json({ success: true, data: [] });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, data: [] });
+  }
+})
+
 // Announce 
 app.post("/announce", async (req, res) => {
   const { title, body, status, target_year, target_branch, target_section, created_by, expires_at } = req.body;
 
-  const query = "insert into announcements (title, body, created_by, target_year, target_branch, target_section, status, deleted_at) values(?, ?, ?, ?, ?, ?, ?, ?)"
+  const query = "insert into announcements (title, body, created_by, target_year, target_branch, target_section, delete_at) values(?, ?, ?, ?, ?, ?, ?)"
 
   try {
-    const response = await pool.query(query, [title, body, JSON.stringify(created_by), target_year, target_branch, target_section, status, expires_at.replace("T", " ")]);
+    const response = await pool.query(query, [title, body, JSON.stringify(created_by), JSON.stringify({ years: target_year }), JSON.stringify({ branches: target_branch }), JSON.stringify({ sections: target_section }), expires_at.replace("T", " ")]);
 
     // send notification 
-    const resp = await notify(title, body, target_year, target_branch, target_section, res);
-    res.json({ success: true, message: "saved to server and notified to target: " + resp });
+    const resp = await notifyGroup(title, body, target_year, target_branch, target_section, res);
+    res.json({ success: true, message: "saved to server and notified to target: " });
 
   } catch (err) {
     console.log(err)
@@ -560,27 +657,83 @@ app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
 // helpers
 
-async function notify(title, body, target_year, target_branch, target_section) {
+async function notifyGroup(title, body, target_year, target_branch, target_section) {
   return new Promise(async (resolve, reject) => {
-    const query = `select fcm_token from users where role = ? ${target_year == "all" ? "" : 'and year = ?'} ${target_branch == "all" ? "" : 'and branch = ?'}  ${target_section == "all" ? "" : 'and section = ?'}`;
 
-    const [students] = await pool.query(query, ["student", target_year, target_branch, target_section]);
+    const YEARS = ["1", "2", "3", "4"];
+    const BRANCHES = ["CSE", "AI", "RA", "ME", "CE", "BCA"];
+    const SECTIONS = ["A", "B", "C"];
 
-    students.forEach(async (student) => {
-      const token = student.fcm_token;
-      const message = {
-        notification: { title, body },
-        token,
-      };
+    const years =
+      target_year.includes("all") ? YEARS : target_year;
 
-      try {
-        const response = await admin.messaging().send(message);
-        console.log("Notification sent:", response);
-        resolve(response);
-      } catch (err) {
-        console.error(err);
-        resolve(err);
+    const branches =
+      target_branch.includes("all") ? BRANCHES : target_branch;
+
+    const sections =
+      target_section.includes("all") ? SECTIONS : target_section;
+
+    const topics = [];
+
+    for (const branch of branches) {
+      for (const year of years) {
+        for (const section of sections) {
+          topics.push(`${branch}_${year}_${section}`);
+        }
       }
+    }
+
+    console.log(topics);
+
+
+    topics.forEach(async (topic) => {
+      await admin.messaging().send({
+        notification: {
+          title: title,
+          body: body
+        },
+        topic: topic
+      });
     })
+
+    resolve({ success: true })
   })
 }
+
+
+async function notify(token, title, body, data) {
+  const message = {
+    token,
+    notification: {
+      title: title,
+      body: body,
+    },
+    data: data
+  };
+
+  try {
+    const response = await admin.messaging().send(message);
+    console.log("Notification sent:", response);
+    return response;
+  } catch (err) {
+    console.error("FCM error:", err.message);
+  }
+}
+
+function getAffectedDays(from, to) {
+  const days = new Set();
+
+  const start = new Date(from);
+  const end = new Date(to);
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    days.add(
+      d.toLocaleString("en-US", { weekday: "long" })
+    );
+  }
+
+  return [...days].join(",");
+}
+
+
+// update schedule set cancelled = 0, cancelled_from = NULL, cancelled_to = NULL;
