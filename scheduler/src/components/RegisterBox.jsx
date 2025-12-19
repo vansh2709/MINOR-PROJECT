@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom'; // (Recommended for real React apps)
+import { Link, useNavigate } from 'react-router-dom'; // (Recommended for real React apps)
 
 function RegisterPage() {
+  const navigate = useNavigate();
   // 1. State to manage the selected role
   const [selectedRole, setSelectedRole] = useState('');
   const [isEmailValid, setEmailValid] = useState(null);
@@ -23,7 +24,7 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8000/register",{
+    const response = await fetch("http://localhost:8000/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -34,7 +35,7 @@ function RegisterPage() {
     const responseJSON = await response.json();
     alert(responseJSON.message);
 
-    if(responseJSON.success === true){
+    if (responseJSON.success === true) {
       window.localStorage.setItem("user_creds", JSON.stringify(formData));
       setFormData({
         role: "",
@@ -46,7 +47,10 @@ function RegisterPage() {
         branch: "",
         year: ""
       });
-    }else{
+
+      alert(responseJSON.message);
+      navigate('/dashboard');
+    } else {
       setFormData(prevData => ({
         ...prevData,
         email: "",
@@ -113,191 +117,198 @@ function RegisterPage() {
     }
   };
 
+  const input =
+    "w-full px-4 py-3 rounded-xl border focus:outline-none transition";
+
   return (
-      <div>
-        <div className="register-page" id="login-page"> {/* Assuming the ID should be register-page */}
-          <h1 className="headings">Register Account</h1>
-          <form id="registrationForm" onSubmit={handleSubmit}>
+    <div className="flex flex-1 items-center justify-center bg-white px-4 py-12">
 
-            {/* Role Select */}
-            <label className="label" htmlFor="roleSelect">Select Role:</label><br />
-            <select
-              className="select-box"
-              id="roleSelect"
-              name="role"
-              required
-              value={selectedRole} // Controlled component value
-              onChange={handleRoleChange} // Event handler
-            >
-              <option value="">-- Please select your role --</option>
-              <option value="Teacher">Teacher</option>
-              <option value="Student">Student</option>
-            </select>
-            <br />
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-xl p-8">
 
-            {/* Common Fields */}
-            <label className="label" htmlFor="name">Name:</label><br />
+        <h1 className="text-3xl font-bold text-center text-gray-800">
+          Create Account
+        </h1>
+        <p className="text-center text-gray-500 mb-8">
+          Register to continue
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* Row 1: Role + Name */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                Role
+              </label>
+              <select
+                className={`${input} border-gray-300 focus:ring-indigo-300`}
+                value={selectedRole}
+                onChange={handleRoleChange}
+                required
+              >
+                <option value="">Select Role</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Student">Student</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                Name
+              </label>
+              <input
+                className={`${input} border-gray-300 focus:ring-indigo-300`}
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Row 2: Email */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Email
+            </label>
             <input
-              className="input-box"
-              type="text"
-              id="name"
-              name="name"
-              required
-              placeholder="Enter Your Name Here"
-              value={formData.name}
-              onChange={handleInputChange}
-            />
-
-            <label className="label" htmlFor="email">Email:</label><br />
-            <input
-              type="email"
-              id="email"
+              className={`${input}
+                ${isEmailValid === true
+                  ? "border-green-500 focus:ring-green-300"
+                  : isEmailValid === false
+                    ? "border-red-500 focus:ring-red-300"
+                    : "border-gray-300 focus:ring-indigo-300"
+                }`}
               name="email"
-              required
-              placeholder="username1234@email.com"
               value={formData.email}
               onChange={handleInputChange}
-
-              className={`input-box ${formData.email.trim() === ""
-                ? "border-gray-400"
-                : isEmailValid === true
-                  ? "!border-green-500"
-                  : isEmailValid === false
-                    ? "!border-red-500"
-                    : "border-gray-400"
-                }`}
-            />
-
-            {
-              formData.email.trim() === ""
-                ? "" : isEmailValid === true ? (
-                  <p className="text-green-500 mt-1">Email available</p>
-                ) : isEmailValid === false ? (
-                  <p className="text-red-500 mt-1">Email already registered</p>
-                ) : null
-            }
-
-            <label className="label" htmlFor="password">Password:</label><br />
-            <input
-              className="input-box"
-              type="password"
-              id="password"
-              name="password"
               required
-              placeholder="*****************"
-              value={formData.password}
-              onChange={handleInputChange}
             />
-            <br />
-
-            {/* Teacher Fields (Conditional Rendering) */}
-            {selectedRole === 'Teacher' && (
-              <fieldset className="field-sections" id="teacherFields">
-                <label className="label" htmlFor="teacherId">Teacher ID:</label>
-                <input
-                  type="text"
-                  id="teacherId"
-                  name="teacher_id"
-                  required={selectedRole === 'Teacher'} // Required if teacher
-                  value={formData.teacher_id}
-                  onChange={handleInputChange}
-
-                  className={`input-box ${formData.teacher_id.trim() === ""
-                    ? "border-gray-400"
-                    : isIDValid === true
-                      ? "!border-green-500"
-                      : isIDValid === false
-                        ? "!border-red-500"
-                        : "border-gray-400"
-                  }`}
-                />
-
-                {
-                  formData.teacher_id.trim() === ""
-                    ? "" : isIDValid === true ? (
-                      <p className="text-green-500 mt-1">Teacher ID available</p>
-                    ) : isIDValid === false ? (
-                      <p className="text-red-500 mt-1">ID already registered</p>
-                    ) : null
-                }
-
-                <br /><br />
-              </fieldset>
+            {isEmailValid === true && (
+              <p className="text-sm text-green-600 mt-1">Email available</p>
             )}
+            {isEmailValid === false && (
+              <p className="text-sm text-red-600 mt-1">Email already registered</p>
+            )}
+          </div>
 
-            {/* Student Fields (Conditional Rendering) */}
-            {selectedRole === 'Student' && (
-              <fieldset className="field-sections" id="studentFields">
-                <label className="label" htmlFor="year">Branch and Year:</label>
+          {/* Teacher Field */}
+          {selectedRole === "Teacher" && (
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                Teacher ID
+              </label>
+              <input
+                className={`${input}
+                  ${isIDValid === true
+                    ? "border-green-500 focus:ring-green-300"
+                    : isIDValid === false
+                      ? "border-red-500 focus:ring-red-300"
+                      : "border-gray-300 focus:ring-indigo-300"
+                  }`}
+                name="teacher_id"
+                value={formData.teacher_id}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          )}
+
+          {/* Student Fields */}
+          {selectedRole === "Student" && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <select
-                  className="select-box"
-                  id="branch"
+                  className={`${input} border-gray-300 focus:ring-indigo-300`}
                   name="branch"
-                  required={selectedRole === 'Student'} // Required if student
                   value={formData.branch}
                   onChange={handleInputChange}
+                  required
                 >
-                  <option value="NULL">-- Select Branch --</option>
-                  <option value="CE">B.Tech: Civil Engineering</option>
-                  <option value="CSE">B.Tech: Computer Science and Engineering</option>
-                  <option value="ME">B.Tech: Mechanical</option>
-                  <option value="RA">B.Tech: Robotics and Automation</option>
-                  <option value="AI">B.Tech: Artificial Intelligence and Machine Learning</option>
-                  <option value="BCA">B.CA: Bachelor of Computer Applications</option>
+                  <option value="">Branch</option>
+                  <option value="CSE">CSE</option>
+                  <option value="AI">AI</option>
+                  <option value="ME">ME</option>
+                  <option value="CE">CE</option>
+                  <option value="RA">RA</option>
+                  <option value="BCA">BCA</option>
                 </select>
+
                 <select
-                  className="select-box"
-                  id="year"
+                  className={`${input} border-gray-300 focus:ring-indigo-300`}
                   name="year"
-                  required={selectedRole === 'Student'} // Required if student
                   value={formData.year}
                   onChange={handleInputChange}
+                  required
                 >
-                  <option value="">-- Select Year --</option>
-                  <option value="1">1st Year</option>
-                  <option value="2">2nd Year</option>
-                  <option value="3">3rd Year</option>
-                  <option value="4">4th Year</option>
+                  <option value="">Year</option>
+                  <option value="1">1st</option>
+                  <option value="2">2nd</option>
+                  <option value="3">3rd</option>
+                  <option value="4">4th</option>
                 </select>
-                <br />
+              </div>
 
-                <label className="label" htmlFor="studentId">Student ID:</label>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Student ID
+                </label>
                 <input
-                  type="text"
-                  id="studentId"
+                  className={`${input}
+                    ${isIDValid === true
+                      ? "border-green-500 focus:ring-green-300"
+                      : isIDValid === false
+                        ? "border-red-500 focus:ring-red-300"
+                        : "border-gray-300 focus:ring-indigo-300"
+                    }`}
                   name="student_id"
-                  required={selectedRole === 'Student'} // Required if student
                   value={formData.student_id}
                   onChange={handleInputChange}
-
-                  className={`input-box ${formData.student_id.trim() === ""
-                    ? "border-gray-400"
-                    : isIDValid === true
-                      ? "!border-green-500"
-                      : isIDValid === false
-                        ? "!border-red-500"
-                        : "border-gray-400"
-                    }`}
-
+                  required
                 />
-                {
-                  formData.student_id.trim() === ""
-                    ? "" : isIDValid === true ? (
-                      <p className="text-green-500 mt-1">Student ID available</p>
-                    ) : isIDValid === false ? (
-                      <p className="text-red-500 mt-1">ID already registered</p>
-                    ) : null
-                }
-                <br /><br />
-              </fieldset>
-            )}
+              </div>
+            </>
+          )}
 
-            <p>Already have an account? <Link to="/login">Login Instead?</Link></p><br />
+          {/* Row 3: Password */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Password
+            </label>
+            <input
+              type="password"
+              className={`${input} border-gray-300 focus:ring-indigo-300`}
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
 
-            <button className="button" type="submit" disabled={isEmailValid && isIDValid ? false : true} >Register</button>
-          </form>
-        </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={!(isEmailValid && isIDValid)}
+            className={`w-full py-3 rounded-xl font-semibold text-white transition
+              border-none ${isEmailValid && isIDValid
+                ? "bg-indigo-600 hover:bg-indigo-700 shadow-md"
+                : "bg-gray-400 cursor-not-allowed"
+              }`}
+          >
+            Register
+          </button>
+
+        </form>
+
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?
+          <Link to="/login" className="text-indigo-600 font-medium hover:underline ml-1">
+            Login
+          </Link>
+        </p>
+
       </div>
+    </div>
   );
 }
 

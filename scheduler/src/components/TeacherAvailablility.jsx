@@ -17,7 +17,7 @@ const TeacherAvailability1 = ({ onSubmit }) => {
     formData.classes = periods;
 
     // send to server
-    const response = await doFetch("http://localhost:8000/teacher-availability", "POST", { "Content-Type": "application/json" }, JSON.stringify(formData));
+    const response = await doFetch("/teacher-availability", "POST", { "Content-Type": "application/json" }, JSON.stringify(formData));
 
     const res_data = await response.data.json();
     loadTimetable();

@@ -116,7 +116,7 @@ app.post("/register", async (req, res) => {
     res.json({ success: false, message: "Credentials required" })
   }
 
-  const response = await fetch("http://localhost:8000/validate-creds", {
+  const response = await fetch("/validate-creds", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

@@ -138,7 +138,7 @@ const TimeTable = ({ day = "Monday" }) => {
       subject_data: { id: classes?.classes[currentEditCell.period_no].id, changes: changes }
     }
 
-    const response = await doFetch("http://localhost:8000/update-schedule", "POST", { "Content-Type": "application/json" }, JSON.stringify(data));
+    const response = await doFetch("/update-schedule", "POST", { "Content-Type": "application/json" }, JSON.stringify(data));
     const res_data = await response.data.json();
 
     if (res_data.success) {

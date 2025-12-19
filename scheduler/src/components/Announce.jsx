@@ -30,7 +30,7 @@ export default function Announce() {
 
         setLoading(true);
         // upload to server 
-        const response = await fetch("http://localhost:8000/announce", {
+        const response = await fetch("/announce", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

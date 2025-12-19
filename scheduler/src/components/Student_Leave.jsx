@@ -42,7 +42,7 @@ const LeaveBox = ({
       applicable_to: to
     }
 
-    const response = await fetch("http://localhost:8000/upload-leave", {
+    const response = await fetch("/upload-leave", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

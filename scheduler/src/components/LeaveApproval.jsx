@@ -42,7 +42,7 @@ const StudentLeaveManagement = () => {
 
   async function verifyLeave(action, applicant, id) {
     const response = await doFetch(
-      "http://localhost:8000/verify-leave",
+      "/verify-leave",
       "GET",
       {
         "X-Action": action,

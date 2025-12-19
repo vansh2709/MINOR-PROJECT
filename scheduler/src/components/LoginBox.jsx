@@ -66,58 +66,83 @@ function LoginPage() {
   }
 
   return (
-    <div>
-      <div className="login-page" id="login-page">
-        <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className='mb-0'>
-            <label className="label" htmlFor="email">Email</label><br />
-            <input
-              name='email'
-              type="email"
-              id="email"
-              required
-              placeholder="tom.holand@mcu.com"
-              onChange={validate}
-              className={`input-box border ${isEmailValid === true
-                ? "!border-green-500"
-                : isEmailValid === false
-                  ? "!border-red-500"
-                  : "border-gray-300"
-                }`}
+    <div className="flex flex-1 items-center justify-center">
 
-            />
+      <div className="w-full max-w-lg bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8">
 
-            {
-              isEmailValid === true ? (
-                <p className="text-green-500">user exists</p>
-              ) : isEmailValid === false ? (
-                <p className="text-red-500">user doesn't exists</p>
-              ) : null
-            }
-          </div>
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          Welcome Back 👋
+        </h2>
+        <p className="text-center text-gray-500 mb-6">
+          Login to continue to your dashboard
+        </p>
 
+        <form onSubmit={handleSubmit} className="space-y-5">
+
+          {/* Email */}
           <div>
-            <label className="label" htmlFor="password">Password</label><br />
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
-              className="input-box"
-              name='password'
-              type="password"
-              id="password"
+              name="email"
+              type="email"
               required
-              placeholder="tom@1992#"
+              placeholder="tom.holland@mcu.com"
               onChange={validate}
+              className={`w-full px-4 py-3 rounded-xl border focus:outline-none transition
+                ${isEmailValid === true
+                  ? "border-green-500 focus:ring-2 focus:ring-green-300"
+                  : isEmailValid === false
+                    ? "border-red-500 focus:ring-2 focus:ring-red-300"
+                    : "border-gray-300 focus:ring-2 focus:ring-indigo-300"
+                }`}
+            />
+
+            {isEmailValid === true && (
+              <p className="text-sm text-green-600 mt-1">User exists</p>
+            )}
+            {isEmailValid === false && (
+              <p className="text-sm text-red-600 mt-1">User doesn’t exist</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              name="password"
+              type="password"
+              required
+              placeholder="••••••••"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
             />
           </div>
-          <p>
-            Don't have an account? <Link to="/register">Register Account</Link>
-          </p>
-          {/* The <br> tag must be self-closing in JSX */}
-          <br />
-          <button className="button" type="submit" disabled={isEmailValid ? false : true}>
+
+          {/* Button */}
+          <button
+            type="submit"
+            disabled={!isEmailValid}
+            className={`w-full py-3 rounded-xl font-semibold text-white transition-all border-none
+              ${isEmailValid
+                ? "bg-indigo-600 hover:bg-indigo-700 shadow-lg"
+                : "bg-gray-400 cursor-not-allowed"
+              }`}
+          >
             Login
           </button>
+
         </form>
+
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Don’t have an account?
+          <Link to="/register" className="text-indigo-600 font-medium hover:underline ml-1">
+            Register
+          </Link>
+        </p>
+
       </div>
     </div>
   );

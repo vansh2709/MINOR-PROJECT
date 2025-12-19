@@ -47,8 +47,8 @@ export const GlobalProvider = ({ children }) => {
         const role = userCreds?.role;
 
         let url = "";
-        if (role === "Student") url = `http://localhost:8000/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`;
-        else url = `http://localhost:8000/get-timetable?teacher_name=${encodeURIComponent(userCreds?.name)}&teacher_id=${userCreds?.teacher_id}&day=${day}`;
+        if (role === "Student") url = `/get-timetable?year=${year}&branch=${branch}&section=${section}&day=${day}`;
+        else url = `/get-timetable?teacher_name=${encodeURIComponent(userCreds?.name)}&teacher_id=${userCreds?.teacher_id}&day=${day}`;
 
         const response = await fetch(url);
         let data = await response.json();
@@ -122,7 +122,7 @@ export const GlobalProvider = ({ children }) => {
             const token = await requestFCMToken();
             if (!token) return false;
 
-            const response = await fetch("http://localhost:8000/save-fcm-token", {
+            const response = await fetch("/save-fcm-token", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -151,7 +151,7 @@ export const GlobalProvider = ({ children }) => {
 
     async function loadLeaves() {
         if (!userData?.email) return;
-        const url = `http://localhost:8000/fetch-leaves?user_data=${encodeURIComponent(JSON.stringify(userData))}`;
+        const url = `/fetch-leaves?user_data=${encodeURIComponent(JSON.stringify(userData))}`;
         const response = await doFetch(url, "GET");
         const leaves = await response.data.json();
 
@@ -174,7 +174,7 @@ export const GlobalProvider = ({ children }) => {
     }
 
     async function loadAnnouncements() {
-        const response = await doFetch(`http://localhost:8000/announcements?year=${userData?.year}&branch=${userData?.branch}&section=${userData?.section}`, "GET");
+        const response = await doFetch(`/announcements?year=${userData?.year}&branch=${userData?.branch}&section=${userData?.section}`, "GET");
 
         const res_data = await response.data.json();
         const announcements = res_data.data;
