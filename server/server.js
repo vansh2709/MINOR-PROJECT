@@ -4,18 +4,24 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const admin = require("./firebaseAdmin");
 const cron = require("node-cron");
+const path = require("path");
 
 const app = express();
+app.use(express.static(path.join(__dirname, "build")));
 app.use(express.json());
 app.use(cors());
 
 // ✅ Create MySQL connection pool
 const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  database: "scheduler",
-  password: "rahul@1992#",
+  host: "burckbbpqxupvi2whhry-mysql.services.clever-cloud.com",
+  user: "urzfj2xhin1vepna:LwT6BYUDC79GADWukkKA@",
+  database: "burckbbpqxupvi2whhry",
+  password: "LwT6BYUDC79GADWukkKA",
 });
+
+app.get("/", (req, res) =>{
+    res.sendFile(path.join(__dirname, "./build/index.html"))
+})
 
 // get fcm token from client
 app.post("/save-fcm-token", async (req, res) => {
