@@ -7,7 +7,6 @@ const cron = require("node-cron");
 const path = require("path");
 
 const app = express();
-app.use(express.static(path.join(__dirname, "build")));
 app.use(express.json());
 app.use(cors());
 
@@ -23,10 +22,6 @@ const pool = mysql.createPool({
 app.get("/wake-me-up", (req, res) => {
   res.json({ success: true, message: "i already wokeup" });
 })
-
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
 
 // get fcm token from client
 app.post("/save-fcm-token", async (req, res) => {
@@ -658,6 +653,11 @@ async function notifyTimetable() {
   });
 }
 
+// route all client endpoints to react build files except api calls
+app.use(express.static(path.join(__dirname, "build")));
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 // ✅ Start server
 const PORT = 8000;
