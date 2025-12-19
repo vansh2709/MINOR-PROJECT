@@ -27,7 +27,7 @@ const team = [
   },
   {
     name: "Rituraj Kalkhudiya",
-    github: "Kalkhudiya",
+    github: "Riturajkalkhudiya",
     linkedin: "https://www.linkedin.com/in/rituraj-kalkhudiya-b32174315/",
     role: "Database Developer"
   },
