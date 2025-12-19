@@ -7,7 +7,7 @@ const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
 
-    const [userData, setUserData] = useState();
+    const [userData, setUserData] = useState({});
     const [classes, setClasses] = useState([]);
     const [leaveHistory, setLeaveHistory] = useState([]);
     const [announcements, setAnnouncements] = useState([]);
@@ -31,7 +31,7 @@ export const GlobalProvider = ({ children }) => {
     runAtWholeHour(() => {
         loadTimetable(userData);
     });
-      
+
 
     const loadTimetable = async (userCreds) => {
         const days = [
@@ -70,7 +70,7 @@ export const GlobalProvider = ({ children }) => {
 
             if (period) {
                 const period_data = {
-                    id: period.id, 
+                    id: period.id,
                     day: period.day,
                     period_id: period.period_id,
                     subject_id: period.subject_id,
@@ -86,7 +86,7 @@ export const GlobalProvider = ({ children }) => {
                 }
                 timetable.push(period_data);
             } else {
-                timetable.push({ code: "", name: "", teacher: "" , isCurrentPeriod: p === new Date().getHours() - 8 ? true : false})
+                timetable.push({ code: "", name: "", teacher: "", isCurrentPeriod: p === new Date().getHours() - 8 ? true : false })
             }
         }
         setClasses({ day: day, classes: timetable });
@@ -174,8 +174,6 @@ export const GlobalProvider = ({ children }) => {
     }
 
     async function loadAnnouncements() {
-        console.log(`http://localhost:8000/announcements?year=${userData?.year}&branch=${userData?.branch}&section=${userData?.section}`)
-
         const response = await doFetch(`http://localhost:8000/announcements?year=${userData?.year}&branch=${userData?.branch}&section=${userData?.section}`, "GET");
 
         const res_data = await response.data.json();
@@ -240,5 +238,9 @@ export const GlobalProvider = ({ children }) => {
 }
 
 export const AppStates = () => {
-    return useContext(GlobalContext);
+    const context = useContext(GlobalContext);
+    if (!context) {
+        throw new Error("AppStates must be used inside GlobalContext.Provider");
+    }
+    return context;
 };

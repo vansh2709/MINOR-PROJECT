@@ -256,18 +256,21 @@ app.post("/update-schedule", async (req, res)=>{
   const { action, subject_data } = req.body;
 
   let query = "";
-  const values = Object.values(subject_data?.changes);
+  let values = Object.values(subject_data?.changes);
 
   if(action === "Update") {
     query = `update schedule set ${Object.keys(subject_data?.changes).map(key => `${key} = ? where id = ?`).join(", ")}`;
     values.push(subject_data.id);
-  } else {
+  } else if(action === "Insert") {
     query = `insert into schedule (${Object.keys(subject_data?.changes).map(key => `${key}`).join(", ")}) values (${Object.keys(subject_data?.changes).map(key => "?").join(", ")})`;
+  } else {
+    query = "delete from schedule where id = ?";
+    values = [subject_data.id];
   }
+
 
   try {
     const [result] = await pool.query(query, values);
-    console.log(result)
     if(result.affectedRows > 0){
       res.json({success: true});
     }else{
@@ -511,7 +514,7 @@ app.post("/teacher-availability", async (req, res) => {
     })
 
     Object.keys(notification).forEach(async (topic) => {
-      console.log(topic, `Period ${notification[topic].map((p => p.period_id)).join(", ")} of ${notification[topic][0].teacher_name} Cancelled`)
+      // console.log(topic, `Period ${notification[topic].map((p => p.period_id)).join(", ")} of ${notification[topic][0].teacher_name} Cancelled`)
 
       await admin.messaging().send({
         notification: {
@@ -601,7 +604,7 @@ cron.schedule("0 22 * * *", () => {
 }, { timezone: "Asia/Kolkata" })
 
 // Morning 08:00 am
-cron.schedule("55 10 * * *", () => {
+cron.schedule("0 8 * * *", () => {
   console.log("Running task at 08:00 AM every day");
   notifyTimetable();
 }, { timezone: "Asia/Kolkata" })

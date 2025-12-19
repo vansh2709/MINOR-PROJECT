@@ -40,8 +40,10 @@ export default function Announce() {
 
         const res_data = await response.json();
         console.log(res_data);
-        setLoading(false);
-        e.target.reset();
+        if (res_data.success) {
+            setLoading(false);
+            e.target.reset();
+        }
     }
 
     return (

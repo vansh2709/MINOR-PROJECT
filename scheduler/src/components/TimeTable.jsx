@@ -70,7 +70,7 @@ const TimeTable = ({ day = "Monday" }) => {
   useEffect(() => {
     if (currentEditCell.option === "edit") {
       const data = classes?.classes?.[currentEditCell.period_no];
-      console.log("checking existing class", currentEditCell.period_no, classes)
+
       if (data) {
         setFormData({
           day: data.day || "",
@@ -127,10 +127,10 @@ const TimeTable = ({ day = "Monday" }) => {
         console.log("no changes")
         return;
       }
-    } else {
+    } else if(action === "Insert") {
       changes = formData
       changes.teacher_id = userData.teacher_id;
-      changes.teacher_name = userData.teacher_name;
+      changes.teacher_name = userData.name;
     }
 
     const data = {
@@ -140,8 +140,8 @@ const TimeTable = ({ day = "Monday" }) => {
 
     const response = await doFetch("http://localhost:8000/update-schedule", "POST", { "Content-Type": "application/json" }, JSON.stringify(data));
     const res_data = await response.data.json();
-    console.log(res_data)
-    if(res_data.success){
+
+    if (res_data.success) {
       setCurrentEditCell({});
       loadTimetable(userData)
     }
@@ -197,14 +197,24 @@ const TimeTable = ({ day = "Monday" }) => {
 
             {
               classes?.classes[currentEditCell.period_no]?.subject_id && (
-                <button className="rounded-md border-none bg-transparent text-black text-lg text-left"
-                  onClick={() => {
+                <div className="flex flex-col ">
+                  <button className="rounded-md border-none bg-transparent text-black text-lg text-left"
+                    onClick={() => {
+                      setCurrentEditCell({
+                        period_no: currentEditCell.period_no,
+                        option: "edit",
+                        toggled: false
+                      })
+                    }}>Edit Subject</button>
+
+                  <button className="rounded-md border-none bg-transparent text-black text-lg text-left" onClick={() => {
                     setCurrentEditCell({
                       period_no: currentEditCell.period_no,
-                      option: "edit",
+                      option: "delete",
                       toggled: false
                     })
-                  }}>Edit Subject</button>
+                  }}>Delete</button>
+                </div>
               )
             }
 
@@ -234,106 +244,112 @@ const TimeTable = ({ day = "Monday" }) => {
               {currentEditCell.option} Subject
             </h2>
 
-            <div className="flex flex-col gap-3">
-              <div className="flex gap-3">
-                {/* DAY */}
-                <select
-                  name="day"
-                  value={formData.day}
-                  onChange={handleChange}
-                  className="input input-box"
-                >
-                  <option value="">Select Day</option>
-                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(d => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
+            {
+              currentEditCell.option === "delete" ? (
+                <p className="text-center text-lg">Are you sure to delete ?</p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <div className="flex gap-3">
+                    {/* DAY */}
+                    <select
+                      name="day"
+                      value={formData.day}
+                      onChange={handleChange}
+                      className="input input-box"
+                    >
+                      <option value="">Select Day</option>
+                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(d => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
 
-                {/* PERIOD */}
-                <input
-                  name="period_id"
-                  placeholder="Period No"
-                  value={
-                    classes?.classes[currentEditCell.period_no]?.subject_id ? formData.period_id : currentEditCell.period_no
-                  }
-                  type="number"
-                  min={0}
-                  max={9}
-                  onChange={handleChange}
-                  className="input bg-gray-100 input-box"
-                />
-              </div>
+                    {/* PERIOD */}
+                    <input
+                      name="period_id"
+                      placeholder="Period No"
+                      value={
+                        classes?.classes[currentEditCell.period_no]?.subject_id ? formData.period_id : currentEditCell.period_no
+                      }
+                      type="number"
+                      min={0}
+                      max={9}
+                      onChange={handleChange}
+                      className="input bg-gray-100 input-box"
+                    />
+                  </div>
 
-              {/* SUBJECT */}
-              <div className="flex gap-3">
-                <input
-                  name="subject_id"
-                  placeholder="Subject Code"
-                  value={formData.subject_id}
-                  autoCapitalize="characters"
-                  onChange={handleChange}
-                  className="input input-box"
-                />
+                  {/* SUBJECT */}
+                  <div className="flex gap-3">
+                    <input
+                      name="subject_id"
+                      placeholder="Subject Code"
+                      value={formData.subject_id}
+                      autoCapitalize="characters"
+                      onChange={handleChange}
+                      className="input input-box"
+                    />
 
-                <input
-                  name="subject_name"
-                  placeholder="Subject Name"
-                  value={formData.subject_name}
-                  onChange={handleChange}
-                  className="input input-box"
-                />
-              </div>
+                    <input
+                      name="subject_name"
+                      placeholder="Subject Name"
+                      value={formData.subject_name}
+                      onChange={handleChange}
+                      className="input input-box"
+                    />
+                  </div>
 
-              <div className="flex gap-3">
-                {/* YEAR */}
-                <input
-                  name="year"
-                  type="number"
-                  placeholder="Year"
-                  value={formData.year}
-                  min={1}
-                  max={4}
-                  onChange={handleChange}
-                  className="input input-box"
-                />
+                  <div className="flex gap-3">
+                    {/* YEAR */}
+                    <input
+                      name="year"
+                      type="number"
+                      placeholder="Year"
+                      value={formData.year}
+                      min={1}
+                      max={4}
+                      onChange={handleChange}
+                      className="input input-box"
+                    />
 
-                {/* BRANCH */}
-                <input
-                  name="branch_id"
-                  placeholder="Branch ID"
-                  value={formData.branch_id}
-                  onChange={handleChange}
-                  className="input input-box"
-                />
+                    {/* BRANCH */}
+                    <input
+                      name="branch_id"
+                      placeholder="Branch ID"
+                      value={formData.branch_id}
+                      onChange={handleChange}
+                      className="input input-box"
+                    />
 
-                {/* SECTION */}
-                <input
-                  name="section"
-                  placeholder="Section"
-                  value={formData.section}
-                  onChange={handleChange}
-                  className="input input-box"
-                />
+                    {/* SECTION */}
+                    <input
+                      name="section"
+                      placeholder="Section"
+                      value={formData.section}
+                      onChange={handleChange}
+                      className="input input-box"
+                    />
 
-                {/* ROOM */}
-                <input
-                  name="room_number"
-                  placeholder="Room Number"
-                  type="number"
-                  value={formData.room_number}
-                  onChange={handleChange}
-                  className="input input-box"
-                />
-              </div>
+                    {/* ROOM */}
+                    <input
+                      name="room_number"
+                      placeholder="Room Number"
+                      type="number"
+                      value={formData.room_number}
+                      onChange={handleChange}
+                      className="input input-box"
+                    />
+                  </div>
 
-              <input
-                name="branch_name"
-                placeholder="Branch Name"
-                value={formData.branch_name}
-                onChange={handleChange}
-                className="input input-box"
-              />
-            </div>
+                  <input
+                    name="branch_name"
+                    placeholder="Branch Name"
+                    value={formData.branch_name}
+                    onChange={handleChange}
+                    className="input input-box"
+                  />
+                </div>
+              )
+            }
 
             {/* ACTIONS */}
             <div className="flex justify-end gap-2 pt-3">
@@ -346,16 +362,14 @@ const TimeTable = ({ day = "Monday" }) => {
 
               <button
                 className="px-4 py-2 rounded-md bg-blue-600 text-white border-none"
-                onClick={() => updateSubject(currentEditCell.option === "insert" ? "Insert" : "Update")}
+                onClick={() => updateSubject(currentEditCell.option === "insert" ? "Insert" : currentEditCell.option === "edit" ? "Update" : "Delete")}
               >
-                {currentEditCell.option === "insert" ? "Insert" : "Update"}
+                {currentEditCell.option === "insert" ? "Insert" : currentEditCell.option === "edit" ? "Update" : "Yes"}
               </button>
             </div>
           </div>
         </div>
       )}
-
-
     </div>
   );
 };

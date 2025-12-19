@@ -24,7 +24,6 @@ function LoginPage() {
     })
 
     const data = await response.json();
-    console.log(data)
     window.localStorage.setItem("user_creds", JSON.stringify(data.user_creds));
 
     alert(data.message);
