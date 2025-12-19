@@ -13,10 +13,10 @@ app.use(cors());
 
 // ✅ Create MySQL connection pool
 const pool = mysql.createPool({
-  host: "burckbbpqxupvi2whhry-mysql.services.clever-cloud.com",
-  user: "urzfj2xhin1vepna",
-  database: "burckbbpqxupvi2whhry",
-  password: "LwT6BYUDC79GADWukkKA",
+  user: "ugbmvz1mq3rgrg6y",
+  host: "bs1ylicpyexxhxy0nlri-mysql.services.clever-cloud.com",
+  password: "cQCQzjgJ4QWOEM7Nh8qX",
+  database: "bs1ylicpyexxhxy0nlri",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
