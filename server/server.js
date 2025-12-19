@@ -18,12 +18,10 @@ const pool = mysql.createPool({
   password: "cQCQzjgJ4QWOEM7Nh8qX",
   database: "bs1ylicpyexxhxy0nlri",
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
 });
 
-app.get("/wake-me-up", (req, res) =>{
-  res.json({success: true, message: "i already wokeup"});
+app.get("/wake-me-up", (req, res) => {
+  res.json({ success: true, message: "i already wokeup" });
 })
 
 app.get(/.*/, (req, res) => {
@@ -52,34 +50,37 @@ app.post("/save-fcm-token", async (req, res) => {
 
 
 // ✅ Endpoint: Validate credentials
+const validateCreds = async (data) => {
+  if (!data || Object.keys(data).length === 0) {
+    return { success: false, message: "no fields provided" };
+  }
+
+  const fields = Object.keys(data);
+  const values = Object.values(data);
+  const whereClause = fields.map(f => `${f} = ?`).join(" AND ");
+
+  const [rows] = await pool.query(
+    `SELECT * FROM users WHERE ${whereClause} LIMIT 1`,
+    values
+  );
+
+  if (rows.length > 0) {
+    return { success: true, message: "credentials found" };
+  }
+
+  return { success: false, message: "credentials not found" };
+};
+
 app.post("/validate-creds", async (req, res) => {
   try {
-    const data = req.body; // e.g., { username: "john" }
-
-    if (!data || Object.keys(data).length === 0) {
-      return res.status(400).json({ success: false, message: "no fields provided" });
-    }
-
-    // Build WHERE clause dynamically
-    const fields = Object.keys(data);
-    const values = Object.values(data);
-    const whereClause = fields.map(f => `${f} = ?`).join(" AND ");
-
-    const [rows] = await pool.query(
-      `SELECT * FROM users WHERE ${whereClause} LIMIT 1`,
-      values
-    );
-
-    if (rows.length > 0) {
-      res.json({ success: true, message: "credentials found" });
-    } else {
-      res.json({ success: false, message: "credentials not found" });
-    }
+    const result = await validateCreds(req.body);
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 
 app.post("/login", async (req, res) => {
@@ -116,20 +117,14 @@ app.post("/register", async (req, res) => {
     res.json({ success: false, message: "Credentials required" })
   }
 
-  const response = await fetch("/validate-creds", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email,
-      [student_id === "" ? "teacher_id" : "student_id"]: student_id === "" ? teacher_id : student_id
-    })
+  const response = await validateCreds({
+    email,
+    [student_id === "" ? "teacher_id" : "student_id"]: student_id === "" ? teacher_id : student_id
   })
 
-  const responseJSON = await response.json();
+  console.log(response)
 
-  if (responseJSON.success == false) {
+  if (response.success == false) {
     // convert password to password hash
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
