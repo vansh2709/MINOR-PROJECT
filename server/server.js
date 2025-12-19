@@ -252,16 +252,16 @@ app.get("/get-timetable", async (req, res) => {
 })
 
 // add / update schedule
-app.post("/update-schedule", async (req, res)=>{
+app.post("/update-schedule", async (req, res) => {
   const { action, subject_data } = req.body;
 
   let query = "";
   let values = Object.values(subject_data?.changes);
 
-  if(action === "Update") {
+  if (action === "Update") {
     query = `update schedule set ${Object.keys(subject_data?.changes).map(key => `${key} = ? where id = ?`).join(", ")}`;
     values.push(subject_data.id);
-  } else if(action === "Insert") {
+  } else if (action === "Insert") {
     query = `insert into schedule (${Object.keys(subject_data?.changes).map(key => `${key}`).join(", ")}) values (${Object.keys(subject_data?.changes).map(key => "?").join(", ")})`;
   } else {
     query = "delete from schedule where id = ?";
@@ -271,14 +271,14 @@ app.post("/update-schedule", async (req, res)=>{
 
   try {
     const [result] = await pool.query(query, values);
-    if(result.affectedRows > 0){
-      res.json({success: true});
-    }else{
-      res.json({success: false});
+    if (result.affectedRows > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
     }
   } catch (error) {
     console.log(error)
-    res.json({success: false, message: "Internal server error"});
+    res.json({ success: false, message: "Internal server error" });
   }
 })
 
@@ -564,7 +564,7 @@ app.get("/announcements", async (req, res) => {
     const [announcements] = await pool.query(query, values);
     if (announcements.length > 0) {
       res.json({ success: true, data: announcements });
-    }else{
+    } else {
       res.json({ success: true, data: [] });
     }
   } catch (error) {
@@ -591,8 +591,6 @@ app.post("/announce", async (req, res) => {
     res.json({ success: false, error: err });
   }
 })
-
-
 
 
 
