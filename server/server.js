@@ -14,9 +14,12 @@ app.use(cors());
 // ✅ Create MySQL connection pool
 const pool = mysql.createPool({
   host: "burckbbpqxupvi2whhry-mysql.services.clever-cloud.com",
-  user: "urzfj2xhin1vepna:LwT6BYUDC79GADWukkKA@",
+  user: "urzfj2xhin1vepna",
   database: "burckbbpqxupvi2whhry",
-  password: "rahul@1992#",
+  password: "LwT6BYUDC79GADWukkKA",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 app.get("/wake-me-up", (req, res) =>{
