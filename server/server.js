@@ -26,9 +26,9 @@ app.get("/wake-me-up", (req, res) =>{
   res.json({success: true, message: "i already wokeup"});
 })
 
-app.get("*", (req, res) =>{
-    res.sendFile(path.join(__dirname, "./build/index.html"))
-})
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 // get fcm token from client
 app.post("/save-fcm-token", async (req, res) => {
