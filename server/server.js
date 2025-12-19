@@ -16,8 +16,12 @@ const pool = mysql.createPool({
   host: "burckbbpqxupvi2whhry-mysql.services.clever-cloud.com",
   user: "urzfj2xhin1vepna:LwT6BYUDC79GADWukkKA@",
   database: "burckbbpqxupvi2whhry",
-  password: "LwT6BYUDC79GADWukkKA",
+  password: "rahul@1992#",
 });
+
+app.get("/wake-me-up", (req, res) =>{
+  res.json({success: true, message: "i already wokeup"});
+})
 
 app.get("/", (req, res) =>{
     res.sendFile(path.join(__dirname, "./build/index.html"))

@@ -19,7 +19,7 @@
 -- Table structure for table `announcements`
 --
 
-USE 
+USE burckbbpqxupvi2whhry;
 
 DROP TABLE IF EXISTS `announcements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
