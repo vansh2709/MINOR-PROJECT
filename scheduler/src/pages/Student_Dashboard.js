@@ -2,8 +2,6 @@ import React from "react";
 import Announcements from "../components/Announcements";
 import Sidebar from "../components/ProfileCard";
 import LeaveBox from "../components/Student_Leave";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import TimeTable from "../components/TimeTable";
 
 

@@ -58,7 +58,7 @@ export default function Footer() {
                 <a
                   href="https://uktech.ac.in/en"
                   target="_blank"
-                  rel={window.location.href}
+                  rel="noreferrer"
                   className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
                 >
                   <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
@@ -69,6 +69,7 @@ export default function Footer() {
                 <a
                   href="https://ittanakpur.ac.in/"
                   target="_blank"
+                  rel="noreferrer"
                   className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
                 >
                   <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
@@ -176,6 +177,7 @@ export default function Footer() {
                     <a
                       href={`https://github.com/${member.github}`}
                       target="_blank"
+                      rel="noreferrer"
                       className="hover:text-gray-900"
                     >
                       <FaGithub size={26} color="#2b2c2b" />
@@ -185,6 +187,7 @@ export default function Footer() {
                     <a
                       href={member.linkedin}
                       target="_blank"
+                      rel="noreferrer"
                       className="hover:text-blue-600"
                     >
                       <FaLinkedin size={26} color="#2b2c2b" />

@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from "react";
-
-import { useNavigate } from "react-router-dom";
-
-import Header from "../components/Header";
+import { useState } from "react";
 import RegisterBox from "../components/RegisterBox";
-import Footer from "../components/Footer";
 
 
 function RegisterPage() {

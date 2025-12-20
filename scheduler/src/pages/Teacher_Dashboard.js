@@ -3,8 +3,6 @@ import TimeTable from "../components/TimeTable";
 import TeacherAvailability from "../components/TeacherAvailablility";
 import StudentLeaveManagement from "../components/LeaveApproval";
 import Sidebar from "../components/ProfileCard";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Announce from "../components/Announce";
 import RequestNotification from "../components/RequestNotification";
 

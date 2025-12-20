@@ -1,9 +1,5 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-
-import Header from "../components/Header";
 import LoginBox from "../components/LoginBox";
-import Footer from "../components/Footer";
 
 function LoginPage() {
   const navigate = useNavigate();
