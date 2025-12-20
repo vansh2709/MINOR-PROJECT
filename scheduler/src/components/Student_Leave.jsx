@@ -1,25 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AppStates } from "../services/states";
 
-const LeaveBox = ({
-  leavesThisMonth = 0,
-  leaveDate = "today",
-  leaveSubject = "Leave Application",
-  leaveStatus = "Pending",
-  onLeaveSubmit,
-}) => {
+const LeaveBox = () => {
 
   const applicationRef = useRef(HTMLTextAreaElement);
   const applicable_from_ref = useRef(HTMLInputElement);
   const applicable_to_ref = useRef(HTMLInputElement);
 
-  const { userData, doFetch, leaveHistory, loadLeaves } = AppStates();
+  const { userData, leaveHistory, loadLeaves } = AppStates();
 
   useEffect(() => {
     // fetch leave
     if (!userData?.email) return;
     loadLeaves(userData?.role);
-  }, [userData])
+  }, [userData, loadLeaves])
 
   async function submitLeave() {
     const application = applicationRef.current.value;

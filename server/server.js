@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const admin = require("./firebaseAdmin");
 const cron = require("node-cron");
 const path = require("path");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());

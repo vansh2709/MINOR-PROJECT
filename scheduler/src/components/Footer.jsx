@@ -58,6 +58,7 @@ export default function Footer() {
                 <a
                   href="https://uktech.ac.in/en"
                   target="_blank"
+                  rel={window.location.href}
                   className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
                 >
                   <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />

@@ -1,4 +1,4 @@
-import React, { act, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppStates } from "../services/states";
 
 const StudentLeaveManagement = () => {
@@ -18,7 +18,7 @@ const StudentLeaveManagement = () => {
 
   /* ---------------- current period class ---------------- */
 
-  let currentClass = classes.classes?.find(c => c.isCurrentPeriod) || {};
+  const [currentClass, setCurrentClass] = useState(classes.classes?.find(c => c.isCurrentPeriod) || {});
   /* ---------------- filtering logic ---------------- */
 
   const filteredLeaves = leaveHistory
@@ -65,10 +65,10 @@ const StudentLeaveManagement = () => {
 
   useEffect(() => {
     loadLeaves("Teacher");
-  }, [userData]);
+  }, [userData, loadLeaves]);
 
   useEffect(() => {
-    currentClass = classes.classes?.find(c => c.isCurrentPeriod);
+    setCurrentClass(classes.classes?.find(c => c.isCurrentPeriod));
   }, [classes])
 
 
@@ -77,7 +77,7 @@ const StudentLeaveManagement = () => {
   useEffect(() => {
     const leaveCount = leaveHistory.filter(l => l.status === (activeTab === "leaves" ? "Pending" : "Approved")).length;
     setLeavesCount(leaveCount)
-  }, [activeTab])
+  }, [activeTab, leaveHistory])
 
   return (
     <div className="w-full flex flex-col  mx-auto">

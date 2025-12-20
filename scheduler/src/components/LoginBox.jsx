@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // <-- IMPORT useNavigate
 import { AppStates } from '../services/states';
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { userData, setUserData } = AppStates();
+  const { setUserData } = AppStates();
 
   // 2. Update the handleSubmit function
   const handleSubmit = async (e) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Select from "react-select";
 import { AppStates } from "../services/states";
 

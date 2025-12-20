@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { AppStates } from "../services/states";
 
 const Announcements = () => {
@@ -19,8 +18,6 @@ const Announcements = () => {
                 <p className="">By  -- {announcement.created_by.name}</p>
                 <p className="">Posted At: {new Date(announcement.created_at).toLocaleString()}</p>
               </div>
-
-              {/* <p>{new Date(announcement.deleted_at).toLocaleString()}</p> */}
             </div>
           ))
         ) : (

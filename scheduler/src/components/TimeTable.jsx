@@ -1,4 +1,4 @@
-import React, { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppStates } from "../services/states";
 
 /**
@@ -7,24 +7,11 @@ import { AppStates } from "../services/states";
  * Accepts props but works with default sample data.
  */
 
-const TimeTable = ({ day = "Monday" }) => {
+const TimeTable = () => {
   const defaultTimeSlots = [
     "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
     "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM",
     "04:00 PM", "05:00 PM",
-  ];
-
-  let defaultSchedule = [
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "", name: "Lunch Break", teacher: "" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
-    { code: "AHT-030", name: "Innovations and Problem Solving", teacher: "Director" },
   ];
 
   const { classes, userData, doFetch, loadTimetable } = AppStates();
@@ -99,7 +86,7 @@ const TimeTable = ({ day = "Monday" }) => {
         subject_name: ""
       });
     }
-  }, [currentEditCell]);
+  }, [currentEditCell, classes?.classes, classes?.day]);
 
   const handleChange = (e) => {
     setFormData(prev => ({
