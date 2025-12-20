@@ -215,7 +215,7 @@ export const GlobalProvider = ({ children }) => {
         // load announcement
         if (userData?.role === "Teacher") return;
         loadAnnouncements();
-    }, [userData, loadAnnouncements, SubscribePushNotification])
+    }, [userData])
 
 
     const exports = {
