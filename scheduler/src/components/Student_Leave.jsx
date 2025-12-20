@@ -25,7 +25,7 @@ const LeaveBox = () => {
       return;
     }
 
-    const subject = application.match(/[Ss]ubject\s*:\s*(.*)\n/)[1];
+    const subject = application?.match(/[Ss]ubject\s*:\s*(.*)\n/)[1];
 
     // upload to database
     const leave = {
@@ -57,7 +57,7 @@ const LeaveBox = () => {
           <div className="leave-history">
             <h2>Leave History</h2>
             <p>
-              Leaves this month: <span>{leaveHistory.length}</span>
+              Leaves this month: <span>{leaveHistory?.length || 0}</span>
             </p>
           </div>
 

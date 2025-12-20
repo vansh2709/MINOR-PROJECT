@@ -61,7 +61,7 @@ export const GlobalProvider = ({ children }) => {
             subject_name: 'LUNCH',
             teacher_name: ' '
         }
-        data.classes.push(lunch);
+        data?.classes?.push(lunch);
 
         const timetable = [];
 
