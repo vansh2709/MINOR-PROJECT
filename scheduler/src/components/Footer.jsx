@@ -15,7 +15,7 @@ const team = [
   },
   {
     name: "Arjun",
-    github: "https://github.com/arjunsinghas0077-eng",
+    github: "arjunsinghas0077-eng",
     linkedin: "",
     role: "Frontend Developer"
   },
