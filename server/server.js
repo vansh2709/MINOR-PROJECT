@@ -28,7 +28,7 @@ const config2 = {
   waitForConnections: true,
 }
 
-const pool = mysql.createPool(config2);
+const pool = mysql.createPool(config1);
 
 app.get("/wake-me-up", (req, res) => {
   res.json({ success: true, message: "i already wokeup" });
