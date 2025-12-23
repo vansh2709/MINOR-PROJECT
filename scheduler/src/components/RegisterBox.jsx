@@ -121,7 +121,9 @@ function RegisterPage() {
     "w-full px-4 py-3 rounded-xl border focus:outline-none transition";
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-white px-4 my-16">
+    <div className="flex flex-1 flex-col gap-24 items-center justify-center bg-white px-4 my-16">
+
+      <p className='font-extrabold text-3xl text-center font-sans text-gray-700'><span className='text-5xl text-indigo-500'>Scheduler</span> <br /> A Smart Way For Academic Communication</p>
 
       <div className="w-full max-w-xl bg-white rounded-xl shadow-xl p-8">
 

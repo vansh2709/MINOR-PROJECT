@@ -3,33 +3,36 @@ import Sidebar from "../components/ProfileCard";
 import LeaveBox from "../components/Student_Leave";
 import TimeTable from "../components/TimeTable";
 import RequestNotification from "../components/RequestNotification";
+import Footer from "../components/Footer";
 
 const StudentDashboard = () => {
-  const announcements = [
-    "Tomorrow is a holiday.",
-    "Submit your assignments by Friday.",
-    "CS Seminar scheduled for next Monday."
-  ];
-
   return (
     <>
       <RequestNotification />
-      <div className="dashboard">
+
+      <div className="flex h-full">
+
         <div className="sidebar">
           <Sidebar />
         </div>
 
-        {/* Left Section – Timetable */}
-        <div className="timetable-section">
-          <TimeTable />
-        </div>
+        <div className="dashboard overflow-hidden overflow-y-auto">
+          <div className="timetable-section">
+            <TimeTable />
+          </div>
 
-        <div className="leave-management card other">
-          <LeaveBox />
-        </div>
+          <div className="leave-management card other">
+            <LeaveBox />
+          </div>
 
-        <div className="announcements card other">
-          <Announcements announcements={announcements} />
+          <div className="announcements card other">
+            <Announcements />
+          </div>
+
+          <div className="footers">
+            <Footer />
+          </div>
+
         </div>
       </div>
     </>

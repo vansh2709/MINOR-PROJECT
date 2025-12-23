@@ -10,7 +10,7 @@ const Announcements = () => {
       <div className="announcements-container w-full flex-1 flex flex-col gap-3">
         {announcements && announcements.length > 0 ? (
           announcements.map((announcement, index) => (
-            <div key={index} className="bg-blue-200 rounded-lg p-4 mx-4 flex flex-col">
+            <div key={index} className="bg-indigo-200 rounded-lg p-4 mx-4 flex flex-col">
               <p className="text-lg font-bold">{announcement.title}</p>
               <p>{announcement.body}</p>
 

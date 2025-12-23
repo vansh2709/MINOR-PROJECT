@@ -15,7 +15,7 @@ const team = [
   },
   {
     name: "Arjun",
-    github: "",
+    github: "arjunsinghas0077-eng",
     linkedin: "",
     role: "Frontend Developer"
   },
@@ -41,13 +41,13 @@ const team = [
 
 export default function Footer() {
   return (
-    <footer className="bg-green-100 text-gray-700 border-t rounded-xl mt-4">
+    <footer className="text-gray-700">
       {/* Top Section */}
-      <div className="bg-green-100 rounded-xl">
+      <div className="bg-gradient-to-br from-[#0a1120] to-[#5964fd]">
         <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
 
           {/* Institutes */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md transition">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition">
             <h3 className="text-lg font-semibold text-[#2b2c2b] mb-2">
               Institutes
             </h3>

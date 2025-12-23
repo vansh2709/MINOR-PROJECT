@@ -27,7 +27,7 @@ const TimeTable = () => {
 
   const SubjectCell = ({ period_no, code, name, teacher, year, branch, section, room_number, cancelled, current }) => (
     <td className={
-      `subject-cell ${current ? "!bg-blue-100" : ""}`
+      `subject-cell ${current ? "!bg-indigo-400" : ""}`
     } onContextMenu={(e) => SubjectEditMenu(e, period_no)}>
       {
         cancelled ? (
@@ -42,10 +42,9 @@ const TimeTable = () => {
         {
           code ? (
             <>
-              <p className="subject-code">{code}</p>
-              <p className="subject-name">{name}</p>
-              <p className="Teacher-name">{userData?.role === "Teacher" ? `${branch || ""}-${year || ""}-${section || ""}-${room_number || ""}` : teacher}</p></>
-
+              <p className={`subject-code ${current ? "!text-gray-100 !font-light" : ""}`}>{code}</p>
+              <p className={`subject-name ${current ? "!text-gray-100 !font-light" : ""}`}>{name}</p>
+              <p className={`Teacher-name ${current ? "!text-gray-100 !font-light" : ""}`}>{userData?.role === "Teacher" ? `${branch || ""}-${year || ""}-${section || ""}-${room_number || ""}` : teacher}</p></>
           ) : (
             "Free"
           )

@@ -12,13 +12,23 @@ app.use(express.json());
 app.use(cors());
 
 // ✅ Create MySQL connection pool
-const pool = mysql.createPool({
+const config = {
   user: "ugbmvz1mq3rgrg6y",
   host: "bs1ylicpyexxhxy0nlri-mysql.services.clever-cloud.com",
   password: "cQCQzjgJ4QWOEM7Nh8qX",
   database: "bs1ylicpyexxhxy0nlri",
   waitForConnections: true,
-});
+}
+
+const config2 = {
+  user: "root",
+  host: "localhost",
+  password: "rahul@1992#",
+  database: "scheduler",
+  waitForConnections: true,
+}
+
+const pool = mysql.createPool(config2);
 
 app.get("/wake-me-up", (req, res) => {
   res.json({ success: true, message: "i already wokeup" });

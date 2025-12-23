@@ -12,7 +12,7 @@ import { GlobalProvider } from "./services/states";
 function App() {
   return (
     <GlobalProvider>
-      <Header />
+      {/* <Header /> */}
       <BrowserRouter>
         <Routes>
           {/* Default Route */}
@@ -24,7 +24,7 @@ function App() {
           <Route path="/dashboard" element={<ProtectedDashboard />} />
         </Routes>
       </BrowserRouter>
-      <Footer />
+      {/* <Footer /> */}
     </GlobalProvider>
   );
 }

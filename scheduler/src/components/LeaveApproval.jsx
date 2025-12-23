@@ -91,7 +91,7 @@ const StudentLeaveManagement = () => {
               <div
                 className={`absolute p-2 w-7 h-7 flex justify-center items-center rounded-full bg-red-500 text-white text-lg 
   -top-4 transition-transform duration-300 delay-500
-  ${activeTab === "leaves" ? "translate-x-6" : "-translate-x-6"}`}
+  ${activeTab === "leaves" ? "-right-4" : "-left-4"}`}
               >
                 {leavesCount}
               </div>

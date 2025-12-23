@@ -66,7 +66,9 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center my-16">
+    <div className="flex flex-1 flex-col items-center justify-center my-16 gap-24">
+
+      <p className='font-extrabold text-3xl text-center font-sans text-gray-700'><span className='text-5xl text-indigo-500'>Scheduler</span> <br/> A Smart Way For Academic Communication</p>
 
       <div className="w-full max-w-lg bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8">
 
