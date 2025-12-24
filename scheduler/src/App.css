@@ -197,7 +197,6 @@ html,body{
     height: 100vh;
     min-width: 320px;
     max-width: 350px;
-    positon: fixed;
 }
 
 .footers {
