@@ -10,7 +10,7 @@ const StudentDashboard = () => {
     <>
       <RequestNotification />
 
-      <div>
+      <div className="flex h-full">
 
         <div className="sidebar">
           <Sidebar />
