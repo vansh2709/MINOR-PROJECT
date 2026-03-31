@@ -14,7 +14,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="sidebar flex flex-col bg-slate-900 text-white p-3">
+    <aside className="sidebar flex flex-col bg-indigo-900 text-white p-3">
 
       <div className="w-full h-20 ml-4 py-12 pt-9 flex justify-start items-center gap-8">
         <div className="h-10 w-10 flex items-center justify-center">
