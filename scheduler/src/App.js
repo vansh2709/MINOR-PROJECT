@@ -5,15 +5,19 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedDashboard from "./components/ProtectedDashboard";
 import Header from "./components/Header";
+import RequestNotification from "./components/RequestNotification";
 import Footer from "./components/Footer";
-
+import StudentDashboard from "./pages/Student_Dashboard";
+import TeacherDashboard from "./pages/Teacher_Dashboard";
 import { GlobalProvider } from "./services/states";
 
 function App() {
   return (
     <GlobalProvider>
+      <RequestNotification />
       {/* <Header /> */}
       <BrowserRouter>
+      <Header />
         <Routes>
           {/* Default Route */}
           <Route path="/" element={<ProtectedDashboard />} />
@@ -24,6 +28,9 @@ function App() {
           <Route path="/dashboard" element={<ProtectedDashboard />} />
         </Routes>
       </BrowserRouter>
+      <div className="footers">
+                  <Footer />
+                </div>
       {/* <Footer /> */}
     </GlobalProvider>
   );

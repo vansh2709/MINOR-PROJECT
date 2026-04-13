@@ -1,7 +1,4 @@
 import {
-  FaYoutube,
-  FaFacebook,
-  FaInstagram,
   FaGithub,
   FaLinkedin
 } from "react-icons/fa";
@@ -41,108 +38,12 @@ const team = [
 
 export default function Footer() {
   return (
-    <footer className="text-gray-700">
-      {/* Top Section */}
+    <footer className="footer text-gray-700">
+      {/* Credits*/}
       <div className="bg-gradient-to-br from-[#0a1120] to-[#5964fd]">
-        <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
 
-          {/* Institutes */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition">
-            <h3 className="text-lg font-semibold text-[#2b2c2b] mb-2">
-              Institutes
-            </h3>
-            <div className="w-10 h-[3px] bg-blue-600 rounded-full mb-4" />
-
-            <ul className="space-y-3 text-sm">
-              <li className="list-none">
-                <a
-                  href="https://uktech.ac.in/en"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
-                >
-                  <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-                  Uttarakhand Technical University
-                </a>
-              </li>
-              <li className="list-none">
-                <a
-                  href="https://ittanakpur.ac.in/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
-                >
-                  <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-                  Institute of Technology, Tanakpur
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick Links */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md transition">
-            <h3 className="text-lg font-semibold text-[#2b2c2b] mb-2">
-              Quick Links
-            </h3>
-            <div className="w-10 h-[3px] bg-blue-600 rounded-full mb-4" />
-
-            <ul className="space-y-3 text-sm text-gray-600">
-              {["Terms & Conditions", "Contact", "Exit"].map((item, i) => (
-                <li className="list-none" key={i}>
-                  <a
-                    href="#"
-                    className="hover:text-blue-600 transition flex items-center gap-2"
-                  >
-                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md transition">
-            <h3 className="text-lg font-semibold text-[#2b2c2b] mb-2">
-              Follow Us
-            </h3>
-            <div className="w-10 h-[3px] bg-blue-600 rounded-full mb-5" />
-
-            <div className="flex gap-4">
-              {[
-                { icon: <FaYoutube />, hover: "hover:text-red-600" },
-                { icon: <FaFacebook />, hover: "hover:text-blue-600" },
-                { icon: <FaInstagram />, hover: "hover:text-pink-500" },
-                { icon: <FaLinkedin />, hover: "hover:text-blue-500" },
-                { icon: <FaGithub />, hover: "hover:text-black" }
-              ].map((item, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className={`
-              w-11 h-11 flex items-center justify-center
-              rounded-md border border-gray-300
-              text-[#2b2c2b] text-[26px]
-              transition-all duration-300
-              hover:scale-110 hover:-translate-y-1
-              hover:shadow-md
-              ${item.hover}
-            `}
-                >
-                  {item.icon}
-                </a>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-
-      {/* Credits */}
-      <div className="border-t bg-white">
         <div className="max-w-7xl mx-auto px-6 py-10">
-          <h3 className="text-center text-gray-900 text-lg font-semibold mb-8">
+          <h3 className="text-center text-gray-100 text-lg font-semibold mb-8">
             Project Credits
           </h3>
 
@@ -164,15 +65,15 @@ export default function Footer() {
                   </div>
                 )}
 
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-100">
                   {member.name}
                 </p>
 
-                <p className="text-sm font-bold text-gray-900">
+                <p className="text-sm font-bold text-gray-100">
                   {member.role}
                 </p>
 
-                <div className="flex gap-3 text-sm text-gray-600">
+                <div className="flex gap-3 text-sm text-gray-200">
                   {member.github && (
                     <a
                       href={`https://github.com/${member.github}`}
@@ -180,7 +81,7 @@ export default function Footer() {
                       rel="noreferrer"
                       className="hover:text-gray-900"
                     >
-                      <FaGithub size={26} color="#2b2c2b" />
+                      <FaGithub size={26} color="#dedede" />
                     </a>
                   )}
                   {member.linkedin && (
@@ -190,7 +91,7 @@ export default function Footer() {
                       rel="noreferrer"
                       className="hover:text-blue-600"
                     >
-                      <FaLinkedin size={26} color="#2b2c2b" />
+                      <FaLinkedin size={26} color="#dedede" />
                     </a>
                   )}
                 </div>

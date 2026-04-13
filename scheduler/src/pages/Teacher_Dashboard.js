@@ -2,10 +2,9 @@ import React from "react";
 import TimeTable from "../components/TimeTable";
 import TeacherAvailability from "../components/TeacherAvailablility";
 import StudentLeaveManagement from "../components/LeaveApproval";
-import Sidebar from "../components/ProfileCard";
+import Navigation from "../components/ProfileCard";
 import Announce from "../components/Announce";
-import RequestNotification from "../components/RequestNotification";
-import Footer from "../components/Footer";
+
 
 const TeacherDashboard = () => {
   const announcements = [
@@ -16,16 +15,12 @@ const TeacherDashboard = () => {
 
   return (
     <>
-      <RequestNotification />
-
       <div className="flex h-full">
-
-        <div className="sidebar">
-          <Sidebar />
-        </div>
-
         <div className="dashboard teacher-dashboard overflow-hidden overflow-y-auto">
           {/* Left Section – Timetable */}
+          <div className="sidebar">
+            <Navigation />
+          </div>
           <div className="timetable-section">
             <TimeTable />
           </div>
@@ -42,9 +37,6 @@ const TeacherDashboard = () => {
             <StudentLeaveManagement />
           </div>
 
-          <div className="footers">
-            <Footer />
-          </div>
         </div>
       </div>
     </>

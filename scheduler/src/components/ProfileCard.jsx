@@ -14,7 +14,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="sidebar flex flex-col bg-indigo-900 text-white p-3">
+    <aside className="sidebar flex flex-col md:flex-row p-3">
 
       <div className="w-full h-20 ml-4 py-12 pt-9 flex justify-start items-center gap-8">
         <div className="h-10 w-10 flex items-center justify-center">
@@ -22,8 +22,7 @@ const Sidebar = () => {
         </div>
 
         <div className="flex flex-col items-start">
-          <p className="text-xl font-bold font-sans">Scheduler</p>
-          <p className="text-sm text-blue-300">{userData?.role} Dashboard</p>
+          <p className="text-lg font-bold font-sans">{userData?.role} Dashboard</p>
         </div>
       </div>
       <div className="w-full h-[1px] bg-gray-100/30"></div>
@@ -77,7 +76,7 @@ const Sidebar = () => {
 
       <div className="w-full h-[1px] bg-slate-700"></div>
 
-      <button className="mt-auto flex items-center bg-transparent border-none text-slate-300 font-light font-sans gap-3 text-sm p-6 pb-4 !border !border-red-700" onClick={logout}>
+      <button className="logout-btn mt-auto flex items-center bg-transparent border-none text-gray-100 font-light font-sans gap-3 text-sm p-6 pb-4 !border !border-red-700" onClick={logout}>
         <FiLogOut size={20} />
         Logout
       </button>
